@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "BIS Habit Lab | Applied Commerce®",
-  description: "A quiet, private learner experience for investigating habits through story, reflection, evidence and a seven-day experiment.",
+  title: "BIS Outcomes Cloud | Applied Commerce®",
+  description: "Behaviour Intelligence Series™ learner and institutional platform for privacy-preserving behavioural evidence, descriptive programme outcomes and cohort reporting.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
