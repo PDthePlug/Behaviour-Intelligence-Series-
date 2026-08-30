@@ -13,7 +13,7 @@ function fail(message: string, status = 400) {
 }
 
 export async function POST(request: Request) {
-  const denied = institutionalAdminFailure(request);
+  const denied = await institutionalAdminFailure(request);
   if (denied) return denied;
 
   let body: EnrolPayload;
