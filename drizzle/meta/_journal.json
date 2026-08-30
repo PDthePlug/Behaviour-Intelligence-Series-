@@ -22,6 +22,13 @@
       "when": 1788009886056,
       "tag": "0002_aberrant_nemesis",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1788062400000,
+      "tag": "0003_institutional_spine",
+      "breakpoints": true
     }
   ]
 }
