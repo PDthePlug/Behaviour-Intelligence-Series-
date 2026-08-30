@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1787988350320,
+      "tag": "0000_fixed_nico_minoru",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1787990284070,
+      "tag": "0001_bright_black_tarantula",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1788009886056,
+      "tag": "0002_aberrant_nemesis",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,0 +1,1083 @@
+{
+  "cartridgeId": "habit-lab-2026",
+  "version": "3.0.1",
+  "title": "Habit Lab™: Self-Mastery Basics v3.0",
+  "description": "Applied Commerce® Behaviour Intelligence Series™ — Unlock self-regulation competencies by training the brain to slow down in high-stress behavioral triggers. Complete the 9 investigations to prove your self-mastery.",
+  "theme": {
+    "primary": "#4f46e5",
+    "accent": "#f97316",
+    "background": "#fafafa"
+  },
+  "beiSchema": [
+    {
+      "code": "BEI-01",
+      "type": "scale",
+      "range": [
+        1,
+        10
+      ],
+      "description": "Habit Control Index (Pre & Post)"
+    },
+    {
+      "code": "BEI-02",
+      "type": "scale",
+      "range": [
+        1,
+        5
+      ],
+      "description": "Behaviour Baseline Profile"
+    },
+    {
+      "code": "BEI-03",
+      "type": "boolean",
+      "range": [
+        0,
+        1
+      ],
+      "description": "Prediction Calibration Score"
+    },
+    {
+      "code": "BEI-04",
+      "type": "scale",
+      "range": [
+        1,
+        10
+      ],
+      "description": "Behaviour Equation Confidence (Pre)"
+    },
+    {
+      "code": "BEI-05",
+      "type": "scale",
+      "range": [
+        1,
+        5
+      ],
+      "description": "Behaviour Risk Index"
+    },
+    {
+      "code": "BEI-06",
+      "type": "scale",
+      "range": [
+        1,
+        5
+      ],
+      "description": "Experiment Adherence Rate"
+    },
+    {
+      "code": "BEI-07",
+      "type": "scale",
+      "range": [
+        1,
+        10
+      ],
+      "description": "Habit Control Shift Index"
+    },
+    {
+      "code": "BEI-08",
+      "type": "scale",
+      "range": [
+        1,
+        10
+      ],
+      "description": "Behaviour Equation Confidence (Post)"
+    },
+    {
+      "code": "BEI-09",
+      "type": "boolean",
+      "range": [
+        0,
+        1
+      ],
+      "description": "Identity Shift Indicator"
+    },
+    {
+      "code": "BEI-10",
+      "type": "boolean",
+      "range": [
+        0,
+        1
+      ],
+      "description": "Behaviour Profile Summary"
+    }
+  ],
+  "timeline": {
+    "steps": [
+      {
+        "id": "step_baseline_00",
+        "title": "Behaviour Baseline Diagnostic (Pre-Workshop)",
+        "difficulty": "Observe",
+        "tensionLevel": 1,
+        "components": [
+          {
+            "id": "comp_baseline_story",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_baseline",
+              "markdown": "### BEHAVIOUR BASELINE — PRE\n\nBefore you begin, complete this diagnostic. Be honest. No one will see this but you.\n\nEvery key metric in this workbook is coded as a Behaviour Evidence Indicator (BEI) — a forensic marker of behavioural change.",
+              "pivots": [
+                {
+                  "text": "Open Baseline Diagnostics",
+                  "beiScore": 5
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_baseline_profile",
+            "type": "LikertMatrix",
+            "beiTarget": "BEI-02",
+            "props": {
+              "question": "BEI-02: Behaviour Baseline Profile\n\nHow often do you...",
+              "items": [
+                "Procrastinate on important tasks",
+                "Impulse buy things you don't need",
+                "Stay up too late when you should sleep",
+                "Miss deadlines or commitments",
+                "Give up quickly when things get hard",
+                "Compare yourself to others negatively",
+                "Seek approval before making decisions",
+                "Interrupt people when they speak",
+                "Avoid difficult conversations",
+                "Start projects but never finish them"
+              ],
+              "labels": [
+                "Never",
+                "Rarely",
+                "Sometimes",
+                "Often",
+                "Always"
+              ]
+            }
+          },
+          {
+            "id": "comp_baseline_index",
+            "type": "StoryNarrative",
+            "beiTarget": "BEI-01",
+            "props": {
+              "episodeId": "comp_baseline_index_ep",
+              "markdown": "### BEI-01: Habit Control Index (Pre)\n\n\"On a scale of 1–10, how much control do you have over your habits?\"\n\n1 = my habits control me. 10 = I consciously design my habits.",
+              "pivots": [
+                {
+                  "text": "1",
+                  "beiScore": 1
+                },
+                {
+                  "text": "2",
+                  "beiScore": 2
+                },
+                {
+                  "text": "3",
+                  "beiScore": 3
+                },
+                {
+                  "text": "4",
+                  "beiScore": 4
+                },
+                {
+                  "text": "5",
+                  "beiScore": 5
+                },
+                {
+                  "text": "6",
+                  "beiScore": 6
+                },
+                {
+                  "text": "7",
+                  "beiScore": 7
+                },
+                {
+                  "text": "8",
+                  "beiScore": 8
+                },
+                {
+                  "text": "9",
+                  "beiScore": 9
+                },
+                {
+                  "text": "10",
+                  "beiScore": 10
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "step_hook_01",
+        "title": "Investigation 1: The Hook",
+        "difficulty": "Observe",
+        "tensionLevel": 2,
+        "prerequisites": [
+          "step_baseline_00"
+        ],
+        "components": [
+          {
+            "id": "comp_hook_story",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_hook_01",
+              "markdown": "### Investigation 1 of 9\n\n**MISSION**: Meet someone whose habits changed everything.\n\n**YOU WILL PRODUCE**:\n● ☐ A prediction about Sipho's future\n\n**TIME**: 5 minutes\n**DIFFICULTY**: 🟢 Observe\n\n---\n\n### Episode 1: The Boy Who Kept Losing R20\n\nMeet Sipho.\n\nSipho is fourteen. He lives with his grandmother in a small house near the taxi rank in Alexandra. His grandmother counts coins every morning—pension money, carefully rationed. She gives Sipho R20 each week for school. Not for sweets. For school.\n\nSipho buys sweets anyway.\n\nMelted in his pocket by lunchtime. Sticky. Regretted. Every week.\n\nSame thing. Every week.\n\n\"I don't know what I want to do,\" he says when people ask. \"Something that makes money.\"\n\nHe doesn't know what that means. He just knows his grandmother counts coins. He just knows he keeps buying sweets. He just knows the R20 disappears and he feels worse than before.\n\nOne afternoon, his grandmother's chair breaks. A leg wobbles. He pushes a piece of folded cardboard into the loose joint. Functional. Clever. He does not think about it. He just does it.\n\nSomeone notices. A neighbour. \"You fixed that. My radio is broken. Can you look at it?\"\n\nHe doesn't know how to fix a radio. But he tries.\n\nThat night, at the spaza shop, he sees Myah—a girl from school who always carries a notebook. She is buying vegetables for her mother. She looks at him differently. Like she sees something. He doesn't know what.\n\nHe opens the radio. He looks at the wires. He does not know what he is doing. But he keeps looking. He keeps trying. Something clicks.\n\nHe fixes it.\n\n\"I could charge for this,\" he thinks.\n\nThen he stops. He does not say this out loud. He has never said anything like that out loud.\n\nHe is fourteen. He has no plan. He has no savings. He has no idea what he is becoming.\n\nBut he just fixed a radio.\n\nAnd something shifted.",
+              "pivots": [
+                {
+                  "text": "Continue to Evidence Challenge",
+                  "beiScore": 5
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_hook_evidence",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "🔎 Evidence Challenge\n\n\"Open your wallet or bag. Count every receipt from the last seven days. Write the total number of receipts.\"\n\nTotal receipts: ___\n\n\"Now look at the receipts. What do they tell you about your habits?\"\n\nWhat I see:",
+              "placeholder": "Total receipts: ___\nWhat I see:",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_hook_predict",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_hook_01_predict",
+              "markdown": "### 🤔 Predict\n\n\"What do you think happens next for Sipho?\"",
+              "pivots": [
+                {
+                  "text": "He gives up and goes back to his old habits",
+                  "beiScore": 1
+                },
+                {
+                  "text": "He keeps wasting money and never changes",
+                  "beiScore": 2
+                },
+                {
+                  "text": "Someone notices him and his path begins",
+                  "beiScore": 5
+                },
+                {
+                  "text": "Nothing changes — he stays the same",
+                  "beiScore": 3
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_hook_pause",
+            "type": "MindfulBreath",
+            "props": {
+              "inhaleSeconds": 5,
+              "holdSeconds": 5,
+              "exhaleSeconds": 5,
+              "cycles": 2,
+              "prompt": "⏸ PAUSE\n\nClose the workbook.\n\nTake 30 seconds.\n\nAsk yourself:\n\n\"What surprised me most so far?\"\n\nThen continue."
+            }
+          }
+        ]
+      },
+      {
+        "id": "step_prediction_02",
+        "title": "Investigation 2: The Prediction",
+        "difficulty": "Observe",
+        "tensionLevel": 2,
+        "prerequisites": [
+          "step_hook_01"
+        ],
+        "components": [
+          {
+            "id": "comp_pred_story",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_pred_02",
+              "markdown": "### Investigation 2 of 9\n\n**MISSION**: Name the habit that controls you most.\n\n**YOU WILL PRODUCE**:\n● ☐ Your most controlling habit\n● ☐ The reward you are actually seeking\n● ☐ Evidence of the habit\n\n**TIME**: 2 minutes\n**DIFFICULTY**: 🟢 Observe\n\n---\n\n### 🤔 Predict\n\n\"What habit controls you most? The habit that you know you want to change but keep repeating. The one that holds you back. The one that costs you more than you want to admit.\"",
+              "pivots": [
+                {
+                  "text": "Write down my most controlling habit",
+                  "beiScore": 5
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_pred_habit",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "✍️ My most controlling habit:",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_pred_evidence",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "🔎 Evidence Challenge\n\n\"Bring one object tomorrow that represents this habit.\"\n\nExamples:\n● An empty cooldrink bottle\n● A gaming controller\n● A bus ticket\n● A shopping receipt\n● Broken earphones\n● Exercise shoes\n● An unfinished notebook\n\nMy object:",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_pred_reward",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "\"Why does this habit persist? What does it give you — even if it also costs you?\"\n\n✍️ The reward I am getting from this habit (honestly):",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_pred_insight",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "🌱 Today's Insight\n\n\"Right now I feel like someone who...\"",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_pred_pause",
+            "type": "MindfulBreath",
+            "props": {
+              "inhaleSeconds": 5,
+              "holdSeconds": 5,
+              "exhaleSeconds": 5,
+              "cycles": 2,
+              "prompt": "⏸ PAUSE\n\nClose the workbook.\n\nTake 30 seconds.\n\nAsk yourself:\n\n\"What surprised me most so far?\"\n\nThen continue."
+            }
+          }
+        ]
+      },
+      {
+        "id": "step_revelation_03",
+        "title": "Investigation 3: The Revelation",
+        "difficulty": "Analyse",
+        "tensionLevel": 3,
+        "prerequisites": [
+          "step_prediction_02"
+        ],
+        "components": [
+          {
+            "id": "comp_rev_story",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_rev_03",
+              "markdown": "### Investigation 3 of 9\n\n**MISSION**: Discover the hidden structure of every habit.\n\n**YOU WILL PRODUCE**:\n● ☐ Understanding of the habit loop\n● ☐ Prediction calibration check\n\n**TIME**: 3 minutes\n**DIFFICULTY**: 🟡 Analyse\n\n---\n\n### Episode 2: What Sipho Didn't See\n\nSipho fixed the radio. He fixed his grandmother's chair. He fixed a neighbour's iron.\n\nHe did not plan to become someone who fixes things. He just kept trying. He kept showing up. He kept persisting.\n\nBut here is what nobody told him: the habit was not the problem. The loop was the problem.\n\n**Cue → Routine → Reward**\n\nThat is all a habit is. A pattern your brain has learned to repeat because it gives you something—even if what it gives you is not what you need.\n\nSipho's sweets habit:\n● **Cue**: Boredom at school, empty pocket, feeling invisible.\n● **Routine**: Spend R20 on sweets.\n● **Reward**: A few minutes of sweetness, feeling like someone who can choose.\n\nThe reward was not the sweets. The reward was the feeling of choosing. Of having something he wanted, even for a few minutes.\n\nHis fixing habit:\n● **Cue**: Broken thing. Challenge. Curiosity.\n● **Routine**: Try. Fail. Try again. Learn.\n● **Reward**: The feeling of making something work. Of being noticed. Of being useful.\n\nBoth habits gave him something. One cost him R20 and made him feel worse. The other built something and made him feel seen.\n\nHe did not need to be more disciplined. He needed to be more strategic. He needed to see the loop and redesign it.\n\nBut he was fourteen. He did not know this yet.\n\nHe just knew he felt something different when he fixed the radio.\n\nThe next day, he tried to buy sweets. He stood at the spaza shop counter. He had his R20.\n\nHe did not buy sweets.\n\nHe bought a packet of screws.\n\nHe did not know why. He just did it.\n\nAnd then he felt something he could not name. Not quite pride. Not quite relief. Something else.\n\nHe walked home, and he heard a voice. His grandmother was talking to the neighbour. \"He fixed your radio? My Sipho?\"\n\nShe sounded surprised. She sounded proud.\n\nHe kept walking. He did not stop. He felt the screws in his pocket.\n\nHe did not know what he was building. He just knew he was building something.\n\nThat evening, Myah walked past his house. She saw him sitting outside, holding the screws. She did not say anything. She just nodded. Like she understood.\n\nShe walked on.\n\nSipho stayed there, holding the screws, not knowing what came next.\n\n---\n\n### 👁️ The Observer\n\n\"Interesting. Nobody noticed what Sipho stopped doing that morning.\"",
+              "pivots": [
+                {
+                  "text": "Check my prediction",
+                  "beiScore": 5
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_rev_calibration",
+            "type": "StoryNarrative",
+            "beiTarget": "BEI-03",
+            "props": {
+              "episodeId": "ep_rev_03_calib",
+              "markdown": "### ✅ Were You Correct?\n\nLook back at your prediction about Sipho.\n\nWas your prediction correct?",
+              "pivots": [
+                {
+                  "text": "Yes",
+                  "beiScore": 1
+                },
+                {
+                  "text": "No",
+                  "beiScore": 0
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_rev_reflect",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "\"What assumption did this story challenge?\"\n\n✍️ ___________________________________________________________",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "step_habit_mapping_04",
+        "title": "Investigation 4: Habit Mapping",
+        "difficulty": "Analyse",
+        "tensionLevel": 4,
+        "prerequisites": [
+          "step_revelation_03"
+        ],
+        "components": [
+          {
+            "id": "comp_map_story",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_map_04",
+              "markdown": "### Investigation 4 of 9\n\n**MISSION**: Discover the real structure of your habit, not the story you tell yourself.\n\n**YOU WILL PRODUCE**:\n● ☐ Cue\n● ☐ Routine\n● ☐ Reward\n● ☐ Cost\n● ☐ Who else pays\n● ☐ New routine\n● ☐ Diagnostic data\n\n**TIME**: 15 minutes\n**DIFFICULTY**: 🟠 Challenge Yourself\n\n---\n\n### 🔍 Investigate\n\nChoose ONE habit you want to change — the one you named in Investigation 2.",
+              "pivots": [
+                {
+                  "text": "Begin deconstruction map",
+                  "beiScore": 5
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_map_habit",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "My habit:",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_map_cue",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "Step 1: Identify the Cue\n\n\"What triggers this habit? When do you do this? What time? Where? Who with? What feeling precedes it?\"\n\n✍️ My cue:",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_map_cue_cert",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_map_04_cert1",
+              "markdown": "How certain are you?\n(1 = guessing, 5 = absolutely certain)",
+              "pivots": [
+                {
+                  "text": "1",
+                  "beiScore": 1
+                },
+                {
+                  "text": "2",
+                  "beiScore": 2
+                },
+                {
+                  "text": "3",
+                  "beiScore": 3
+                },
+                {
+                  "text": "4",
+                  "beiScore": 4
+                },
+                {
+                  "text": "5",
+                  "beiScore": 5
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_map_routine",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "Step 2: Identify the Routine\n\n\"Exactly what do you do? Walk through the steps.\"\n\n✍️ My routine:",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_map_reward",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "Step 3: Identify the Reward\n\n\"What do you actually get from this habit? Not what you should get — what you actually get.\"\n\n✍️ My reward (honest version):",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_map_reward_cert",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_map_04_cert2",
+              "markdown": "How certain are you?\n(1 = guessing, 5 = absolutely certain)",
+              "pivots": [
+                {
+                  "text": "1",
+                  "beiScore": 1
+                },
+                {
+                  "text": "2",
+                  "beiScore": 2
+                },
+                {
+                  "text": "3",
+                  "beiScore": 3
+                },
+                {
+                  "text": "4",
+                  "beiScore": 4
+                },
+                {
+                  "text": "5",
+                  "beiScore": 5
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_map_cost",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "Step 4: The Cost\n\n\"What does this habit cost you? Time? Money? Energy? Self-respect? Relationships?\"\n\n✍️ My cost:",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_map_who_pays",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "Step 5: Who Else Pays?\n\n\"Who else pays the price for this pattern? Your family? Your future self? Your community?\"\n\n✍️ Who else pays:",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_map_new_routine",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "Step 6: The New Routine\n\n\"What could you do instead? What is a replacement routine that gives you a similar reward without the cost?\"\n\n✍️ My new routine:",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_map_diagnostics",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "Step 7: Diagnostic Layer\n\n\"Which emotion appears most often before this habit?\"\n✍️ Emotion:\n\n\"Which environment makes this habit strongest?\"\n✍️ Environment:\n\n\"Which person makes this habit more likely?\"\n✍️ Person:\n\n\"How many times did this habit happen yesterday?\"\n✍️ Count:",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_map_insight",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "⭐ EVIDENCE POINT\nThis page becomes part of your Behaviour Profile.\n\n🌱 Today's Insight\n\n\"Right now I feel like someone who...\"\n\n✍️ ___________________________________________________________",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_map_pause",
+            "type": "MindfulBreath",
+            "props": {
+              "inhaleSeconds": 5,
+              "holdSeconds": 5,
+              "exhaleSeconds": 5,
+              "cycles": 2,
+              "prompt": "⏸ PAUSE\n\nClose the workbook.\n\nTake 30 seconds.\n\nAsk yourself:\n\n\"What is one thing I now see that I did not see before?\"\n\nThen continue."
+            }
+          }
+        ]
+      },
+      {
+        "id": "step_equation_05",
+        "title": "Investigation 5: Behaviour Equation",
+        "difficulty": "Align",
+        "tensionLevel": 3,
+        "prerequisites": [
+          "step_habit_mapping_04"
+        ],
+        "components": [
+          {
+            "id": "comp_eq_story",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_eq_05",
+              "markdown": "### Investigation 5 of 9\n\n**MISSION**: Write the formula that explains your habit pattern.\n\n**YOU WILL PRODUCE**:\n● ☐ Personal Equation\n● ☐ Falsification test\n\n**TIME**: 10 minutes\n**DIFFICULTY**: 🔴 Identity Shift\n\n---\n\n### 🧠 Think\n\nYour Personal Equation\n\nWrite your habit pattern as a diagnostic formula:\n\nCue + Old Routine = Cost\n\nCue + New Routine = Reward Without Cost",
+              "pivots": [
+                {
+                  "text": "Write my equation",
+                  "beiScore": 5
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_eq_formulas",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "✍️ My Equation:",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_eq_confidence",
+            "type": "StoryNarrative",
+            "beiTarget": "BEI-04",
+            "props": {
+              "episodeId": "comp_eq_confidence_ep",
+              "markdown": "### BEI-04: Behaviour Equation Confidence (Pre)\n\n\"How confident are you that this equation explains your behaviour?\"\n\n1 = Not confident at all. 10 = Absolutely certain.",
+              "pivots": [
+                {
+                  "text": "1",
+                  "beiScore": 1
+                },
+                {
+                  "text": "2",
+                  "beiScore": 2
+                },
+                {
+                  "text": "3",
+                  "beiScore": 3
+                },
+                {
+                  "text": "4",
+                  "beiScore": 4
+                },
+                {
+                  "text": "5",
+                  "beiScore": 5
+                },
+                {
+                  "text": "6",
+                  "beiScore": 6
+                },
+                {
+                  "text": "7",
+                  "beiScore": 7
+                },
+                {
+                  "text": "8",
+                  "beiScore": 8
+                },
+                {
+                  "text": "9",
+                  "beiScore": 9
+                },
+                {
+                  "text": "10",
+                  "beiScore": 10
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_eq_falsification",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "\"What evidence would prove your equation is wrong?\"\n\n✍️ ___________________________________________________________",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_eq_insight",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "⭐ EVIDENCE POINT\nThis page becomes part of your Behaviour Profile.\n\n🌱 Today's Insight\n\n\"Right now I feel like someone who...\"\n\n✍️ ___________________________________________________________",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_eq_examples",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_eq_05_examples",
+              "markdown": "Example Equations:\n\n**Pattern** | **Equation**\nAvoiding hard conversations | Need approval + Avoiding discomfort = Delayed decisions\nOverspending | Fear + Comparison = Overspending\nBroken promises | Laziness + Instant reward = Broken promises\nGiving up too soon | Fear of failure + Past failures = Quit before starting",
+              "pivots": [
+                {
+                  "text": "Continue",
+                  "beiScore": 5
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "step_contract_06",
+        "title": "Investigation 6: Behaviour Contract",
+        "difficulty": "Align",
+        "tensionLevel": 3,
+        "prerequisites": [
+          "step_equation_05"
+        ],
+        "components": [
+          {
+            "id": "comp_contract_story",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_contract_06",
+              "markdown": "### Investigation 6 of 9\n\n**MISSION**: Commit to a 7-day experiment that will test your equation.\n\n**YOU WILL PRODUCE**:\n● ☐ Behaviour Contract\n● ☐ Behaviour Risk Index\n● ☐ Signed commitment\n\n**TIME**: 10 minutes\n**DIFFICULTY**: ⚖️ Decide\n\n---\n\n### 🤝 Commit",
+              "pivots": [
+                {
+                  "text": "Create Contract",
+                  "beiScore": 5
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_contract_details",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "One habit I will track:\n\nMy new routine (what I will do instead):\n\nMy cue (when I will do it — same time, same place):\n\nMy reward (what I will get from the new routine):\n\nMy witness (who will hold me accountable):\n\nWhat I will do if I miss a day (my restart plan):\n\nMy minimum version (the smallest I can do on my worst day):\n\nMy failure signal (how I will know if this experiment is not working):",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_contract_risk",
+            "type": "LikertMatrix",
+            "beiTarget": "BEI-05",
+            "props": {
+              "question": "⭐ EVIDENCE POINT\nThis page becomes part of your Behaviour Profile.\n\nBEI-05: Behaviour Risk Index\n\nMy habit affects:",
+              "items": [
+                "Health",
+                "Money",
+                "Relationships",
+                "School",
+                "Work",
+                "Mental wellbeing"
+              ],
+              "labels": [
+                "Not at all",
+                "Slightly",
+                "Moderately",
+                "Significantly",
+                "Extremely"
+              ]
+            }
+          },
+          {
+            "id": "comp_contract_reflect",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "My Commitment Statement\n\n\"I, ________________________________, commit to tracking [habit] for 7 days, starting on ___________ and ending on ___________. I understand that I will not be perfect. When I miss a day, I will restart the next day without guilt — because guilt is not a strategy.\"\n\nSigned: ________________________________\nDate: ________________________________",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_contract_insight",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "🌱 Today's Insight\n\n\"Right now I feel like someone who...\"\n\n✍️ ___________________________________________________________",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "step_experiment_07",
+        "title": "Investigation 7: 7-Day Experiment",
+        "difficulty": "Reflect",
+        "tensionLevel": 1,
+        "prerequisites": [
+          "step_contract_06"
+        ],
+        "components": [
+          {
+            "id": "comp_exp_story",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_exp_07",
+              "markdown": "### Investigation 7 of 9\n\n**MISSION**: Track your behaviour for seven days. Collect evidence.\n\n**YOU WILL PRODUCE**:\n● ☐ 7-Day Completion Rate\n\n**TIME**: 5 minutes (setup)\n**DIFFICULTY**: 📊 Track\n\n---\n\n⭐ EVIDENCE POINT\nThis page becomes part of your Behaviour Profile.\n\nBEI-06: Experiment Adherence Rate\n\nInstructions: Each day, mark ✓ if you did your new routine, or ✗ if you did not. In the Notes column, write what helped or got in the way.",
+              "pivots": [
+                {
+                  "text": "Start Tracking",
+                  "beiScore": 5
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_exp_matrix",
+            "type": "LikertMatrix",
+            "beiTarget": "BEI-06",
+            "props": {
+              "question": "Rate your adherence across the 7 days of the trial:",
+              "items": [
+                "Day 1: Did I do it?",
+                "Day 2: Did I do it?",
+                "Day 3: Did I do it?",
+                "Day 4: Did I do it?",
+                "Day 5: Did I do it?",
+                "Day 6: Did I do it?",
+                "Day 7: Did I do it?"
+              ],
+              "labels": [
+                "Not done",
+                "Partially done",
+                "Mostly done",
+                "Done",
+                "Exceeded expectations"
+              ]
+            }
+          },
+          {
+            "id": "comp_exp_notes",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "Notes on your daily tracking. What helped or got in the way?\n\nBEI-06: Days Completed: ___ / 7\nConsecutive Days: ___ / 7",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_exp_continue",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_exp_07_cont",
+              "markdown": "Continue your journey:\n\nIf you wish to continue your experiment beyond seven days, you can transfer it into a longer Behaviour Journal™.\n\n### PHASE B: THE EXPERIMENT\nThis is the 7-day experiment. Complete this section after you leave the workshop.",
+              "pivots": [
+                {
+                  "text": "Conclude Experiment Phase",
+                  "beiScore": 5
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "step_review_08",
+        "title": "Investigation 8: Evidence Review",
+        "difficulty": "Reflect",
+        "tensionLevel": 2,
+        "prerequisites": [
+          "step_experiment_07"
+        ],
+        "components": [
+          {
+            "id": "comp_review_story",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_review_08",
+              "markdown": "### Investigation 8 of 9\n\n**MISSION**: Harvest what you have learned from seven days of tracking.\n\n**YOU WILL PRODUCE**:\n● ☐ BEI-07: Habit Control Shift Index\n● ☐ BEI-08: Behaviour Equation Confidence (Post)\n● ☐ Final Reflection\n\n**TIME**: 10 minutes\n**DIFFICULTY**: 🌱 Reflect\n\n---\n\n⭐ EVIDENCE POINT\nThis page becomes part of your Behaviour Profile.",
+              "pivots": [
+                {
+                  "text": "Begin Evidence Review",
+                  "beiScore": 5
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_review_bei07",
+            "type": "StoryNarrative",
+            "beiTarget": "BEI-07",
+            "props": {
+              "episodeId": "comp_review_bei07_ep",
+              "markdown": "### BEI-07: Habit Control Shift Index\n\n\"On a scale of 1–10, how much control do you have over your habits now?\"",
+              "pivots": [
+                {
+                  "text": "1",
+                  "beiScore": 1
+                },
+                {
+                  "text": "2",
+                  "beiScore": 2
+                },
+                {
+                  "text": "3",
+                  "beiScore": 3
+                },
+                {
+                  "text": "4",
+                  "beiScore": 4
+                },
+                {
+                  "text": "5",
+                  "beiScore": 5
+                },
+                {
+                  "text": "6",
+                  "beiScore": 6
+                },
+                {
+                  "text": "7",
+                  "beiScore": 7
+                },
+                {
+                  "text": "8",
+                  "beiScore": 8
+                },
+                {
+                  "text": "9",
+                  "beiScore": 9
+                },
+                {
+                  "text": "10",
+                  "beiScore": 10
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_review_bei08",
+            "type": "StoryNarrative",
+            "beiTarget": "BEI-08",
+            "props": {
+              "episodeId": "comp_review_bei08_ep",
+              "markdown": "### BEI-08: Behaviour Equation Confidence (Post)\n\n\"How confident are you now that your equation explains your behaviour?\"",
+              "pivots": [
+                {
+                  "text": "1",
+                  "beiScore": 1
+                },
+                {
+                  "text": "2",
+                  "beiScore": 2
+                },
+                {
+                  "text": "3",
+                  "beiScore": 3
+                },
+                {
+                  "text": "4",
+                  "beiScore": 4
+                },
+                {
+                  "text": "5",
+                  "beiScore": 5
+                },
+                {
+                  "text": "6",
+                  "beiScore": 6
+                },
+                {
+                  "text": "7",
+                  "beiScore": 7
+                },
+                {
+                  "text": "8",
+                  "beiScore": 8
+                },
+                {
+                  "text": "9",
+                  "beiScore": 9
+                },
+                {
+                  "text": "10",
+                  "beiScore": 10
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_review_reflection",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "Final Reflection Questions\n1. Did I do my habit most days? Why or why not?\n\n2. What was the hardest part of the 7 days?\n\n3. What was the best part?\n\n4. Did my habit get easier over time, or stay difficult?\n\n5. What evidence convinced you that this pattern exists?\n\n6. Which belief became harder to defend after this experiment?",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_review_metahabit",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "My Meta-Habit\nThe meta-habit is the habit of noticing and adjusting your habits.\n\n✍️ My plan to keep the meta-habit alive:",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "step_profile_09",
+        "title": "Investigation 9: Behaviour Profile",
+        "difficulty": "Integrate",
+        "tensionLevel": 1,
+        "prerequisites": [
+          "step_review_08"
+        ],
+        "components": [
+          {
+            "id": "comp_profile_story",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_prof_09",
+              "markdown": "### Investigation 9 of 9\n\n**MISSION**: Synthesise everything you have discovered into one page.\n\n**YOU WILL PRODUCE**:\n● ☐ BEI-09: Identity Shift Indicator\n● ☐ BEI-10: Behaviour Profile Summary\n\n**TIME**: 10 minutes\n**DIFFICULTY**: 🔴 Identity Shift\n\n---\n\n⭐ EVIDENCE POINT\nThis page becomes part of your Behaviour Profile.",
+              "pivots": [
+                {
+                  "text": "Create Behaviour Profile",
+                  "beiScore": 5
+                }
+              ]
+            }
+          },
+          {
+            "id": "comp_profile_identity",
+            "type": "PrivateReflection",
+            "beiTarget": "BEI-09",
+            "props": {
+              "prompt": "BEI-09: Identity Shift Indicator\n\n✍️ Complete this sentence:\n\n\"I am becoming someone who ______________________________________________.\"",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_profile_summary",
+            "type": "PrivateReflection",
+            "beiTarget": "BEI-10",
+            "props": {
+              "prompt": "BEHAVIOUR PROFILE SUMMARY\nBEI-10: Behaviour Profile Summary\n\nHabit Investigated:\nBiggest Trigger:\nReward I Was Seeking:\nCost I Was Ignoring:\nRisk Factors:\nMy Equation:\nConfidence (Pre → Post):\nHabit Control (Pre → Post):\nNext Habit to Investigate:\n\nOne Sentence That Describes Me Now\n\n✍️ ___________________________________________________________",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_profile_letter",
+            "type": "PrivateReflection",
+            "props": {
+              "prompt": "Letter to My Future Self\nWrite a letter to yourself. Address it to \"Future Me.\" Tell your future self:\n\n● Who you are right now\n● What you learned from tracking a habit for 7 days\n● What you are proud of\n● What you still need to work on\n● One habit you want to keep building\n\nDear Future Me,\n\n...\n\nFrom me, in Grade ___\nDate: ________________",
+              "placeholder": "...",
+              "isPrivate": true
+            }
+          },
+          {
+            "id": "comp_profile_continue",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_prof_09_cont",
+              "markdown": "YOUR JOURNEY CONTINUES\nContinue your investigation with another Lab:\n\n☐ Decision Lab™ — Why do I keep making the same choices?\n☐ Money Lab™ — Where does my money actually go?\n☐ Identity Lab™ — Who am I becoming?\n☐ Communication Lab™ — How do I speak, listen, and connect?\n☐ Risk Lab™ — What am I not protecting?",
+              "pivots": [
+                {
+                  "text": "Claim Certificate",
+                  "beiScore": 5
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "step_certificate_10",
+        "title": "Habit Transformation Certificate",
+        "difficulty": "Integrate",
+        "tensionLevel": 1,
+        "prerequisites": [
+          "step_profile_09"
+        ],
+        "components": [
+          {
+            "id": "comp_cert_story",
+            "type": "StoryNarrative",
+            "props": {
+              "episodeId": "ep_cert_10",
+              "markdown": "HABIT TRANSFORMATION CERTIFICATE\n\nAPPLIED COMMERCE®\nBehaviour Intelligence Series™\nHabit Transformation Certificate\nThis certifies that\n\n____________________\n\nhas successfully completed the\n\nHABIT LAB™\n\nBehavioural Investigation\n\n---\n\nBehaviour Evidence Indicator Summary:\n\n**Code** | **Behaviour Evidence Indicator** | **Pre** | **Post** | **Shift**\nBEI-01 | Habit Control Index | /10 | /10 | +\nBEI-04 | Behaviour Equation Confidence | /10 | /10 | +\nBEI-06 | Experiment Adherence Rate | /7 | — | —\n\nFacilitator: ____________________\nDate: ____________________\nWorkbook ID: ____________________\n\nApplied Commerce®\nBehaviour Comes Before Results",
+              "pivots": [
+                {
+                  "text": "Accept Certificate",
+                  "beiScore": 5
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "signature": ""
+}
