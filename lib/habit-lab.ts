@@ -23,6 +23,20 @@ export type LikertProps = {
   labels: string[];
 };
 
+export type ChecklistProps = {
+  question: string;
+  items: string[];
+};
+
+export type DailyEvidenceTrackerProps = {
+  question: string;
+  days: number;
+  actionLabel?: string;
+  doneLabel: string;
+  notDoneLabel: string;
+  notesLabel: string;
+};
+
 export type BreathProps = {
   prompt?: string;
   inhaleSeconds: number;
@@ -33,9 +47,9 @@ export type BreathProps = {
 
 export type LabComponent = {
   id: string;
-  type: "StoryNarrative" | "PrivateReflection" | "LikertMatrix" | "MindfulBreath";
+  type: "StoryNarrative" | "PrivateReflection" | "LikertMatrix" | "CheckboxInventory" | "DailyEvidenceTracker" | "MindfulBreath";
   beiTarget?: string;
-  props: StoryNarrativeProps | ReflectionProps | LikertProps | BreathProps;
+  props: StoryNarrativeProps | ReflectionProps | LikertProps | ChecklistProps | DailyEvidenceTrackerProps | BreathProps;
 };
 
 export type LabStep = {
@@ -49,7 +63,7 @@ export type LabStep = {
 
 export type BeiIndicator = {
   code: string;
-  type: "scale" | "boolean";
+  type: "scale" | "boolean" | "count" | "set";
   range: number[];
   description: string;
 };
