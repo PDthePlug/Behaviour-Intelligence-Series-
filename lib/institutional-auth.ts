@@ -12,6 +12,13 @@ function constantTimeEqual(left: string, right: string) {
   return mismatch === 0;
 }
 
+export async function controlPlaneAuthorized(request: Request) {
+  const configured = await configuredAdminKey();
+  if (!configured) return false;
+  const provided = request.headers.get("x-bis-admin-key")?.trim() ?? "";
+  return Boolean(provided && constantTimeEqual(provided, configured));
+}
+
 export async function institutionalAdminFailure(request: Request): Promise<Response | null> {
   const configured = await configuredAdminKey();
   if (!configured) {
@@ -21,8 +28,7 @@ export async function institutionalAdminFailure(request: Request): Promise<Respo
     );
   }
 
-  const provided = request.headers.get("x-bis-admin-key")?.trim() ?? "";
-  if (!provided || !constantTimeEqual(provided, configured)) {
+  if (!(await controlPlaneAuthorized(request))) {
     return Response.json(
       { error: "Institutional access denied." },
       { status: 401, headers: { "Cache-Control": "no-store" } },
