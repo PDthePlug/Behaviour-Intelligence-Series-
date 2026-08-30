@@ -9,7 +9,7 @@ function fail(message: string, status = 400) {
 }
 
 export async function GET(request: Request) {
-  const denied = institutionalAdminFailure(request);
+  const denied = await institutionalAdminFailure(request);
   if (denied) return denied;
 
   const cohortId = new URL(request.url).searchParams.get("cohortId")?.trim() ?? "";
