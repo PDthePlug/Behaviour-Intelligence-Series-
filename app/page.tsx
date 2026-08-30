@@ -52,13 +52,13 @@ export default function Home() {
           <div className="hero-note"><LockKeyhole size={15} /> Private by default. Insight is earned, never assumed.</div>
         </div>
 
-        <div className="hero-art" aria-label="BIS learner evidence dashboard preview">
+        <div className="hero-art" aria-label="Illustrative BIS learner evidence dashboard preview">
           <div className="paper-stack back" />
           <div className="paper-stack mid" />
           <div className="evidence-card">
             <div className="card-topline">
               <span>Volume 1 · The Learner&apos;s Journey</span>
-              <span className="live-dot">Live cohort</span>
+              <span className="live-dot">Illustrative cohort</span>
             </div>
             <div className="evidence-title">
               <p>HABIT LAB™</p>
@@ -66,8 +66,8 @@ export default function Home() {
             </div>
             <div className="path-line"><span className="active" /><span className="active" /><span className="active" /><span /><span /><span /></div>
             <div className="evidence-metric-grid">
-              <div><small>COHORT ENGAGEMENT</small><strong>82<span>%</span></strong><i>+8 this term</i></div>
-              <div><small>EXPERIMENT ADHERENCE</small><strong>4.1<span>/5</span></strong><i>Evidence, not opinion</i></div>
+              <div><small>COHORT ENGAGEMENT</small><strong>—</strong><i>Populates after deployment</i></div>
+              <div><small>EXPERIMENT ADHERENCE</small><strong>—</strong><i>Calculated from recorded evidence</i></div>
             </div>
             <div className="observer-note"><Eye size={16} /><span><b>The Observer</b><br />“The story becomes clearer when patterns repeat.”</span></div>
           </div>
@@ -95,8 +95,8 @@ export default function Home() {
 
       <section className="lab-section" id="labs">
         <div className="lab-heading">
-          <div><p className="section-kicker"><span>02</span> THE LEARNER&apos;S JOURNEY</p><h2>One complete Lab.<br /><i>Deliberate depth.</i></h2></div>
-          <p>Habit Lab is the first and only cartridge currently available: a complete 90-minute investigation followed by a seven-day real-world experiment.</p>
+          <div><p className="section-kicker"><span>02</span> THE LEARNER&apos;S JOURNEY</p><h2>Deep curriculum.<br /><i>Progressive digital release.</i></h2></div>
+          <p>Habit Lab™ and Decision Lab™ are currently available as digital cartridges. The wider 32-Lab Behaviour Intelligence Series™ already exists in curriculum form and is being progressively released into the learner runtime.</p>
         </div>
         <div className="lab-grid">
           <article className="lab-card featured">
@@ -104,7 +104,12 @@ export default function Home() {
             <div><h3>Habit Lab™</h3><p>Baseline, nine investigations, 55 progressive interactions and a seven-day experiment.</p></div>
             <button className="lab-open" aria-label="Open Habit Lab in the learner platform" onClick={() => window.location.assign("/portal")}><ChevronRight size={18} /></button>
           </article>
-          <article className="lab-card more"><Layers3 /><div><h3>Future cartridges</h3><p>The wider Behaviour Intelligence Series remains a product roadmap—not learner-facing filler.</p></div></article>
+          <article className="lab-card featured">
+            <span>02 · AVAILABLE NOW</span>
+            <div><h3>Decision Lab™</h3><p>Hidden-option investigation, personal decision equation, decision contract and a seven-day experiment.</p></div>
+            <button className="lab-open" aria-label="Open Decision Lab in the learner platform" onClick={() => window.location.assign("/portal")}><ChevronRight size={18} /></button>
+          </article>
+          <article className="lab-card more"><Layers3 /><div><h3>30 Labs in conversion</h3><p>The remaining BIS Labs already exist in the curriculum catalogue and are being converted into certified digital cartridges.</p></div></article>
         </div>
       </section>
 
@@ -112,18 +117,18 @@ export default function Home() {
         <div className="institution-copy">
           <p className="section-kicker inverse"><span>03</span> BUILT FOR INSTITUTIONS</p>
           <h2>Give people the language to understand what they are building.</h2>
-          <p>BIS gives programme leaders a coherent delivery model, a private learner space and a term-end evidence picture. It is designed for schools, youth programmes and corporate-sponsored cohorts.</p>
+          <p>BIS gives programme leaders a coherent delivery model, a private learner space and a cohort-level evidence picture. It is designed for schools, youth programmes and corporate-sponsored cohorts.</p>
           <ul>
             <li><Check size={17} /> Facilitator-ready workshops and experiments</li>
             <li><Check size={17} /> Cohort-level progress and evidence reporting</li>
-            <li><Check size={17} /> Certification pathway for educators and coaches</li>
+            <li><Check size={17} /> Private learner writing excluded from institutional views</li>
           </ul>
         </div>
         <div className="institution-dashboard">
-          <div className="dash-header"><span>Northbridge Academy · Grade 10</span><CircleDot size={17} /></div>
-          <div className="dash-hero"><p>TERM 2 / 2026</p><h3>Growth is becoming visible.</h3><span>Current evidence window</span></div>
-          <div className="dash-stats"><div><small>ACTIVE LEARNERS</small><strong>182</strong></div><div><small>LAB COMPLETION</small><strong>76%</strong></div><div><small>FACILITATORS</small><strong>4</strong></div></div>
-          <div className="dash-progress"><span>Habit Lab™</span><div><i /><i /><i /><i className="pale" /><i className="pale" /></div><b>4/9</b></div>
+          <div className="dash-header"><span>Illustrative institution · Example cohort</span><CircleDot size={17} /></div>
+          <div className="dash-hero"><p>PILOT EVIDENCE VIEW</p><h3>Growth becomes visible when evidence accumulates.</h3><span>Illustrative interface — not live outcome data</span></div>
+          <div className="dash-stats"><div><small>ACTIVE LEARNERS</small><strong>—</strong></div><div><small>LAB COMPLETION</small><strong>—</strong></div><div><small>OBSERVATIONS</small><strong>—</strong></div></div>
+          <div className="dash-progress"><span>Habit Lab™</span><div><i /><i /><i /><i className="pale" /><i className="pale" /></div><b>Evidence</b></div>
           <div className="dash-footer"><UsersRound size={17} /> Aggregated cohort view · no private learner writing displayed</div>
         </div>
       </section>
@@ -131,7 +136,7 @@ export default function Home() {
       <section className="founding-section" id="founding">
         <div className="founding-symbol">↗</div>
         <div><p className="section-kicker"><span>04</span> FOUNDING SCHOOLS COHORT</p><h2>Start with the learners<br />who shape what comes next.</h2></div>
-        <div className="founding-right"><p>Bring BIS to one Grade 9–12 cohort. Receive the learner journey, facilitator onboarding and an outcome report your school can actually use.</p><button className="primary-button" onClick={() => window.location.assign("/portal")}>View the platform <BookOpen size={18} /></button></div>
+        <div className="founding-right"><p>Bring BIS to one Grade 9–12 cohort. Receive the learner journey, facilitator onboarding and a structured cohort evidence view designed for responsible programme decisions.</p><button className="primary-button" onClick={() => window.location.assign("/portal")}>View the platform <BookOpen size={18} /></button></div>
       </section>
 
       <footer>

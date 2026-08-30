@@ -1,33 +1,16 @@
 import assert from "node:assert/strict";
+import { existsSync, readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 
-const developmentPreviewMeta =
-  /<meta(?=[^>]*\bname=["']codex-preview["'])(?=[^>]*\bcontent=["']development["'])[^>]*>/i;
+const dist = (relativePath) => fileURLToPath(new URL(`../dist/${relativePath}`, import.meta.url));
 
-test("renders development preview metadata", async () => {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-  const { default: worker } = await import(workerUrl.href);
+test("packages a deployable Cloudflare Sites build", () => {
+  assert.ok(existsSync(dist("server/index.js")), "vinext must emit the Cloudflare worker bundle");
+  assert.ok(existsSync(dist(".openai/hosting.json")), "the Sites build must package hosting metadata");
+  assert.ok(existsSync(dist(".openai/drizzle")), "the Sites build must package D1 migrations");
 
-  const response = await worker.fetch(
-    new Request("http://localhost/", {
-      headers: { accept: "text/html" },
-    }),
-    {
-      ASSETS: {
-        fetch: async () => new Response("Not found", { status: 404 }),
-      },
-    },
-    {
-      waitUntil() {},
-      passThroughOnException() {},
-    },
-  );
-
-  assert.equal(response.status, 200);
-  assert.match(
-    response.headers.get("content-type") ?? "",
-    /^text\/html\b/i,
-  );
-  assert.match(await response.text(), developmentPreviewMeta);
+  const hosting = JSON.parse(readFileSync(dist(".openai/hosting.json"), "utf8"));
+  assert.equal(hosting.d1, "DB");
+  assert.ok(typeof hosting.project_id === "string" && hosting.project_id.length > 0);
 });

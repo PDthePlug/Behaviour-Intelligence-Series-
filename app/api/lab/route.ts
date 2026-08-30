@@ -1,6 +1,6 @@
 import { and, desc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
-import { labComponentResponses, learnerProfiles } from "@/db/schema";
+import { cohortMembers, labAssignments, labComponentResponses, learnerProfiles } from "@/db/schema";
 import { componentForLab, defaultLab, labById, labComponentIds, labComponents, labStepIds } from "@/lib/lab-catalog";
 import { sessionFromRequest } from "@/lib/session";
 
@@ -22,6 +22,25 @@ async function learnerForRequest(request: Request) {
   const db = getDb();
   const [profile] = await db.select({ id: learnerProfiles.id }).from(learnerProfiles).where(eq(learnerProfiles.sessionId, sessionId)).limit(1);
   return profile?.id ?? null;
+}
+
+async function institutionalContextForLearner(learnerId: string, cartridgeId: string) {
+  const db = getDb();
+  const matches = await db
+    .select({ cohortId: cohortMembers.cohortId, assignmentId: labAssignments.id })
+    .from(cohortMembers)
+    .innerJoin(
+      labAssignments,
+      and(
+        eq(labAssignments.cohortId, cohortMembers.cohortId),
+        eq(labAssignments.cartridgeId, cartridgeId),
+        eq(labAssignments.status, "active"),
+      ),
+    )
+    .where(and(eq(cohortMembers.learnerId, learnerId), eq(cohortMembers.status, "active")));
+
+  if (matches.length !== 1) return { cohortId: null, assignmentId: null };
+  return matches[0];
 }
 
 function safeParse(payload: string) {
@@ -61,6 +80,8 @@ export async function GET(request: Request) {
       payload: safeParse(row.payload),
       isComplete: row.isComplete,
       beiTarget: row.beiTarget,
+      cohortId: row.cohortId,
+      assignmentId: row.assignmentId,
       updatedAt: row.updatedAt,
     })),
     summary: {
@@ -93,6 +114,7 @@ export async function POST(request: Request) {
   const serialized = JSON.stringify(body.payload ?? null);
   if (serialized.length > 16_000) return failure("This reflection is too long to save in one interaction.");
   const component = componentForLab(lab, componentId);
+  const institutionalContext = await institutionalContextForLearner(learnerId, lab.cartridgeId);
   const now = Date.now();
   const db = getDb();
 
@@ -105,6 +127,8 @@ export async function POST(request: Request) {
     payload: serialized,
     isComplete: body.isComplete === true,
     beiTarget: component?.beiTarget,
+    cohortId: institutionalContext.cohortId,
+    assignmentId: institutionalContext.assignmentId,
     updatedAt: now,
   }).onConflictDoUpdate({
     target: [labComponentResponses.learnerId, labComponentResponses.cartridgeId, labComponentResponses.componentId],
@@ -113,9 +137,17 @@ export async function POST(request: Request) {
       payload: serialized,
       isComplete: body.isComplete === true,
       beiTarget: component?.beiTarget,
+      cohortId: institutionalContext.cohortId,
+      assignmentId: institutionalContext.assignmentId,
       updatedAt: now,
     },
   });
 
-  return Response.json({ saved: true, componentId, isComplete: body.isComplete === true, updatedAt: now }, { status: 201, headers: { "Cache-Control": "no-store" } });
+  return Response.json({
+    saved: true,
+    componentId,
+    isComplete: body.isComplete === true,
+    institutional: institutionalContext.assignmentId ? { linked: true } : { linked: false },
+    updatedAt: now,
+  }, { status: 201, headers: { "Cache-Control": "no-store" } });
 }
