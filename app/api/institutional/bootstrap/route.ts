@@ -27,6 +27,10 @@ function slugify(value: string) {
     .slice(0, 80);
 }
 
+function optionalTimestamp(value: unknown) {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
 function fail(message: string, status = 400) {
   return Response.json({ error: message }, { status, headers: { "Cache-Control": "no-store" } });
 }
@@ -84,8 +88,8 @@ export async function POST(request: Request) {
       organisationId,
       name: deploymentName,
       status: "active",
-      startsAt: Number.isFinite(body.startsAt) ? Number(body.startsAt) : null,
-      endsAt: Number.isFinite(body.endsAt) ? Number(body.endsAt) : null,
+      startsAt: optionalTimestamp(body.startsAt),
+      endsAt: optionalTimestamp(body.endsAt),
       createdAt: now,
       updatedAt: now,
     }),
