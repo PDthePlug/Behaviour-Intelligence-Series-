@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, isNull } from "drizzle-orm";
 import { getDb } from "@/db";
 import { auditEvents, cohorts, facilitatorCohorts, organisationUserInvites, organisationUsers } from "@/db/schema";
 import { requireInstitutionalAccess, type InstitutionalRole } from "@/lib/institutional-access";
@@ -92,6 +92,15 @@ export async function POST(request: Request) {
       await db.insert(facilitatorCohorts).values({ id: crypto.randomUUID(), organisationUserId: userId, cohortId, createdAt: now });
     }
   }
+
+  // Re-inviting an account invalidates every older outstanding token for the same organisation/email.
+  await db.update(organisationUserInvites)
+    .set({ acceptedAt: now })
+    .where(and(
+      eq(organisationUserInvites.organisationId, organisationId),
+      eq(organisationUserInvites.email, email),
+      isNull(organisationUserInvites.acceptedAt),
+    ));
 
   const token = createOpaqueToken();
   const tokenHash = await hashOpaqueToken(token);
