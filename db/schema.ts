@@ -83,14 +83,56 @@ export const organisationUsers = sqliteTable(
     id: text("id").primaryKey(),
     organisationId: text("organisation_id").notNull(),
     email: text("email").notNull(),
+    firstName: text("first_name"),
+    surname: text("surname"),
     role: text("role").notNull().default("viewer"),
     status: text("status").notNull().default("invited"),
+    passcodeHash: text("passcode_hash"),
+    passcodeSalt: text("passcode_salt"),
+    lastLoginAt: integer("last_login_at"),
     createdAt: integer("created_at").notNull(),
     updatedAt: integer("updated_at").notNull(),
   },
   (table) => [
     uniqueIndex("organisation_users_org_email_unique").on(table.organisationId, table.email),
     index("organisation_users_email_idx").on(table.email),
+    index("organisation_users_role_idx").on(table.organisationId, table.role, table.status),
+  ],
+);
+
+export const institutionalSessions = sqliteTable(
+  "institutional_sessions",
+  {
+    id: text("id").primaryKey(),
+    organisationUserId: text("organisation_user_id").notNull(),
+    tokenHash: text("token_hash").notNull(),
+    expiresAt: integer("expires_at").notNull(),
+    lastSeenAt: integer("last_seen_at").notNull(),
+    revokedAt: integer("revoked_at"),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("institutional_sessions_token_unique").on(table.tokenHash),
+    index("institutional_sessions_user_idx").on(table.organisationUserId, table.expiresAt),
+  ],
+);
+
+export const organisationUserInvites = sqliteTable(
+  "organisation_user_invites",
+  {
+    id: text("id").primaryKey(),
+    organisationId: text("organisation_id").notNull(),
+    email: text("email").notNull(),
+    role: text("role").notNull(),
+    tokenHash: text("token_hash").notNull(),
+    expiresAt: integer("expires_at").notNull(),
+    acceptedAt: integer("accepted_at"),
+    createdByUserId: text("created_by_user_id"),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("organisation_user_invites_token_unique").on(table.tokenHash),
+    index("organisation_user_invites_org_idx").on(table.organisationId, table.email),
   ],
 );
 
@@ -131,6 +173,20 @@ export const cohorts = sqliteTable(
   ],
 );
 
+export const facilitatorCohorts = sqliteTable(
+  "facilitator_cohorts",
+  {
+    id: text("id").primaryKey(),
+    organisationUserId: text("organisation_user_id").notNull(),
+    cohortId: text("cohort_id").notNull(),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("facilitator_cohorts_unique").on(table.organisationUserId, table.cohortId),
+    index("facilitator_cohorts_cohort_idx").on(table.cohortId),
+  ],
+);
+
 export const cohortMembers = sqliteTable(
   "cohort_members",
   {
@@ -148,6 +204,28 @@ export const cohortMembers = sqliteTable(
   ],
 );
 
+export const learnerEnrolmentLinks = sqliteTable(
+  "learner_enrolment_links",
+  {
+    id: text("id").primaryKey(),
+    cohortId: text("cohort_id").notNull(),
+    tokenHash: text("token_hash").notNull(),
+    label: text("label").notNull().default("Learner enrolment"),
+    maxUses: integer("max_uses"),
+    uses: integer("uses").notNull().default(0),
+    requireLearnerConsent: integer("require_learner_consent", { mode: "boolean" }).notNull().default(true),
+    expiresAt: integer("expires_at"),
+    revokedAt: integer("revoked_at"),
+    createdByUserId: text("created_by_user_id"),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("learner_enrolment_links_token_unique").on(table.tokenHash),
+    index("learner_enrolment_links_cohort_idx").on(table.cohortId, table.expiresAt),
+  ],
+);
+
 export const labAssignments = sqliteTable(
   "lab_assignments",
   {
@@ -156,6 +234,7 @@ export const labAssignments = sqliteTable(
     cartridgeId: text("cartridge_id").notNull(),
     status: text("status").notNull().default("active"),
     assignedAt: integer("assigned_at").notNull(),
+    startsAt: integer("starts_at"),
     dueAt: integer("due_at"),
     createdAt: integer("created_at").notNull(),
     updatedAt: integer("updated_at").notNull(),
@@ -163,6 +242,7 @@ export const labAssignments = sqliteTable(
   (table) => [
     uniqueIndex("lab_assignments_cohort_cartridge_unique").on(table.cohortId, table.cartridgeId),
     index("lab_assignments_status_idx").on(table.cohortId, table.status),
+    index("lab_assignments_schedule_idx").on(table.cohortId, table.startsAt, table.dueAt),
   ],
 );
 
