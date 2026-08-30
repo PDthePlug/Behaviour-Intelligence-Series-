@@ -38,7 +38,9 @@ test("links learner interactions to one unambiguous active institutional assignm
 
 test("derives institutional completion from assigned cartridge structure instead of a magic denominator", () => {
   const dashboard = source("app/api/institutional/dashboard/route.ts");
-  assert.match(dashboard, /labComponents\(lab\)\.length/);
+  assert.match(dashboard, /labComponents\(lab\)/);
+  assert.match(dashboard, /componentCount = components\.length/);
+  assert.match(dashboard, /expectedInteractions = componentCount \* activeLearners/);
   assert.match(dashboard, /expectedInteractions/);
   assert.doesNotMatch(dashboard, /\*\s*55/);
   assert.doesNotMatch(dashboard, /payload:/, "institutional dashboard must not select or emit learner response payloads");

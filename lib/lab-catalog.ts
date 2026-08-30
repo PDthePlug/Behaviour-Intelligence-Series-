@@ -1,7 +1,9 @@
 import decisionLabData from "@/data/decision-lab.json";
-import { habitLab, type LabCartridge, type LabComponent, type LabStep } from "@/lib/habit-lab";
+import { habitLab as rawHabitLab, type LabCartridge, type LabComponent, type LabStep } from "@/lib/habit-lab";
+import { applyWorkbookSourceFidelity } from "@/lib/source-fidelity";
 
-export const decisionLab = decisionLabData as LabCartridge;
+export const habitLab = applyWorkbookSourceFidelity(rawHabitLab);
+export const decisionLab = applyWorkbookSourceFidelity(decisionLabData as LabCartridge);
 export const publishedLabs = [habitLab, decisionLab] as const;
 export const defaultLab = habitLab;
 

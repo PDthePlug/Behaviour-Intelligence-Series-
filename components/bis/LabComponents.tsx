@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { BookOpen, Check, LockKeyhole, Pause, Play, RotateCcw, ShieldCheck, Wind } from "lucide-react";
 import {
   BreathProps,
+  ChecklistProps,
+  DailyEvidenceTrackerProps,
   LabComponent,
   LikertProps,
   parseWorkbookPrompt,
@@ -17,6 +19,13 @@ type RendererProps = {
   component: LabComponent;
   saved?: SavedResponse;
   onSave: SaveComponent;
+};
+
+type TrackerDay = {
+  date: string;
+  action?: string;
+  done: boolean | null;
+  notes: string;
 };
 
 function InlineText({ text }: { text: string }) {
@@ -152,9 +161,8 @@ function LikertMatrix({ stepId, component, saved, onSave }: RendererProps) {
     setAnswers(nextAnswers);
     setSavingIndex(itemIndex);
     const complete = props.items.every((_, index) => nextAnswers[String(index)] !== undefined);
-    const averageScore = complete ? Number((Object.values(nextAnswers).reduce((total, value) => total + value, 0) / props.items.length).toFixed(1)) : 0;
     try {
-      await onSave(stepId, component.id, { answers: nextAnswers, averageScore }, complete);
+      await onSave(stepId, component.id, { answers: nextAnswers }, complete);
     } finally {
       setSavingIndex(null);
     }
@@ -176,6 +184,128 @@ function LikertMatrix({ stepId, component, saved, onSave }: RendererProps) {
           </article>
         ))}
       </div>
+    </section>
+  );
+}
+
+function CheckboxInventory({ stepId, component, saved, onSave }: RendererProps) {
+  const props = component.props as ChecklistProps;
+  const prior = (saved?.payload as { selectedItems?: number[] } | undefined)?.selectedItems ?? [];
+  const [selected, setSelected] = useState<Set<number>>(() => new Set(prior));
+  const [saving, setSaving] = useState(false);
+
+  function toggle(index: number) {
+    setSelected((current) => {
+      const next = new Set(current);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  }
+
+  async function save() {
+    const selectedItems = Array.from(selected).sort((a, b) => a - b);
+    setSaving(true);
+    try {
+      await onSave(stepId, component.id, {
+        selectedItems,
+        selectedLabels: selectedItems.map((index) => props.items[index]).filter(Boolean),
+      }, true);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <section className="lab-interaction matrix-interaction">
+      <div className="interaction-label"><span>Behaviour evidence inventory</span><em className={saved?.isComplete ? "saved" : ""}>{saved?.isComplete ? "Saved" : "Select all that apply"}</em></div>
+      <h3>{props.question}</h3>
+      <div className="pivot-grid">
+        {props.items.map((item, index) => (
+          <button key={item} type="button" className={selected.has(index) ? "pivot-choice selected" : "pivot-choice"} onClick={() => toggle(index)}>
+            <span>{selected.has(index) && <Check size={13} />}</span><b>{item}</b>
+          </button>
+        ))}
+      </div>
+      <button className="reflection-commit" disabled={saving} onClick={save}>{saving ? "Saving…" : "Save risk inventory"}</button>
+    </section>
+  );
+}
+
+function longestDoneStreak(days: TrackerDay[]) {
+  let longest = 0;
+  let current = 0;
+  for (const day of days) {
+    if (day.done === true) {
+      current += 1;
+      longest = Math.max(longest, current);
+    } else {
+      current = 0;
+    }
+  }
+  return longest;
+}
+
+function DailyEvidenceTracker({ stepId, component, saved, onSave }: RendererProps) {
+  const props = component.props as DailyEvidenceTrackerProps;
+  const savedDays = (saved?.payload as { days?: TrackerDay[] } | undefined)?.days ?? [];
+  const [days, setDays] = useState<TrackerDay[]>(() => Array.from({ length: props.days }, (_, index) => ({
+    date: savedDays[index]?.date ?? "",
+    action: savedDays[index]?.action ?? "",
+    done: savedDays[index]?.done ?? null,
+    notes: savedDays[index]?.notes ?? "",
+  })));
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const daysCompleted = days.filter((day) => day.done === true).length;
+  const trackedDays = days.filter((day) => day.done !== null).length;
+  const consecutiveDays = longestDoneStreak(days);
+  const isComplete = days.every((day) => day.date.trim() && day.done !== null && (!props.actionLabel || (day.action ?? "").trim()));
+
+  function updateDay(index: number, patch: Partial<TrackerDay>) {
+    setDays((current) => current.map((day, dayIndex) => dayIndex === index ? { ...day, ...patch } : day));
+    setSaveError("");
+  }
+
+  async function saveProgress() {
+    setSaving(true);
+    setSaveError("");
+    try {
+      await onSave(stepId, component.id, { days, daysCompleted, consecutiveDays }, isComplete);
+    } catch {
+      setSaveError("Your tracker could not be saved. Try once more.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <section className="lab-interaction matrix-interaction">
+      <div className="interaction-label"><span>7-day evidence tracker</span><em className={isComplete ? "saved" : ""}>{trackedDays}/{props.days} days recorded</em></div>
+      <h3>{props.question}</h3>
+      <div className="matrix-progress"><i style={{ width: `${(trackedDays / Math.max(props.days, 1)) * 100}%` }} /></div>
+      <div className="matrix-items">
+        {days.map((day, index) => (
+          <article key={`day-${index + 1}`}>
+            <small>Day {index + 1}</small>
+            <div className="reflection-question">
+              <label htmlFor={`${component.id}-date-${index}`}>Date</label>
+              <input id={`${component.id}-date-${index}`} type="date" value={day.date} onChange={(event) => updateDay(index, { date: event.target.value })} />
+              {props.actionLabel && <><label htmlFor={`${component.id}-action-${index}`}>{props.actionLabel}</label><input id={`${component.id}-action-${index}`} value={day.action ?? ""} onChange={(event) => updateDay(index, { action: event.target.value })} placeholder={`Record today's ${props.actionLabel.toLowerCase()}…`} /></>}
+              <label>Did I do it?</label>
+              <div className="matrix-options">
+                <button type="button" className={day.done === true ? "selected" : ""} onClick={() => updateDay(index, { done: true })}><b><Check size={14} /></b><span>{props.doneLabel}</span></button>
+                <button type="button" className={day.done === false ? "selected" : ""} onClick={() => updateDay(index, { done: false })}><b>×</b><span>{props.notDoneLabel}</span></button>
+              </div>
+              <label htmlFor={`${component.id}-notes-${index}`}>{props.notesLabel}</label>
+              <textarea id={`${component.id}-notes-${index}`} rows={2} value={day.notes} onChange={(event) => updateDay(index, { notes: event.target.value })} placeholder="What helped or got in the way?" />
+            </div>
+          </article>
+        ))}
+      </div>
+      <div className="reflection-title">BEI-06: Days Completed: {daysCompleted} / {props.days}<br />Consecutive Days: {consecutiveDays} / {props.days}</div>
+      <button className="reflection-commit" disabled={saving} onClick={saveProgress}>{saving ? "Saving…" : isComplete ? "Save completed experiment" : "Save tracker progress"}</button>
+      {saveError && <p className="interaction-error">{saveError}</p>}
     </section>
   );
 }
@@ -231,5 +361,7 @@ export function LabComponentRenderer(props: RendererProps) {
   if (props.component.type === "StoryNarrative") return <StoryNarrative {...props} />;
   if (props.component.type === "PrivateReflection") return <PrivateReflection {...props} />;
   if (props.component.type === "LikertMatrix") return <LikertMatrix {...props} />;
+  if (props.component.type === "CheckboxInventory") return <CheckboxInventory {...props} />;
+  if (props.component.type === "DailyEvidenceTracker") return <DailyEvidenceTracker {...props} />;
   return <MindfulBreath {...props} />;
 }
