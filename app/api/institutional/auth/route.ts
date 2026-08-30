@@ -97,6 +97,7 @@ export async function POST(request: Request) {
       .where(and(eq(organisationUsers.organisationId, invite.organisationId), eq(organisationUsers.email, invite.email)))
       .limit(1);
     if (!user) return fail("The invited institutional account no longer exists.", 404);
+    if (user.status !== "invited") return fail("This invitation is no longer valid for the current account state.", 409);
 
     const salt = createPasscodeSalt();
     const passcodeHash = await hashPasscode(passcode, salt);
