@@ -48,7 +48,7 @@ test("learner invitation claims require learner identity and capture learner par
   assert.match(links, /requireLearnerConsent/);
   assert.match(enrolment, /sessionFromRequest/);
   assert.match(enrolment, /consentType: "learner_participation"/);
-  assert.match(enrolment, /Private reflection words are not shared/);
+  assert.match(enrolment, /private reflection words are not shared/i);
   assert.match(enrolment, /alreadyMember: true/);
   assert.match(join, /My private reflection words remain private/);
 });
