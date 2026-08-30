@@ -22,12 +22,19 @@ import {
 
 export const MIN_OUTCOME_AGGREGATE_SIZE = 5;
 
+function assignmentIsLive(assignment: { status: string; startsAt: number | null; dueAt: number | null }, now: number) {
+  if (assignment.status !== "active" && assignment.status !== "scheduled") return false;
+  if (assignment.startsAt && assignment.startsAt > now) return false;
+  if (assignment.dueAt && assignment.dueAt < now) return false;
+  return true;
+}
+
 export async function buildCohortOutcome(cohortId: string) {
   const db = getDb();
   const [cohort] = await db.select().from(cohorts).where(eq(cohorts.id, cohortId)).limit(1);
   if (!cohort) return null;
 
-  const [[organisation], [deployment], members, assignments, responseRows, observationRows, evidenceRows] = await Promise.all([
+  const [[organisation], [deployment], members, assignmentRows, responseRows, observationRows, evidenceRows] = await Promise.all([
     db.select({ id: organisations.id, name: organisations.name, slug: organisations.slug })
       .from(organisations)
       .where(eq(organisations.id, cohort.organisationId))
@@ -40,7 +47,7 @@ export async function buildCohortOutcome(cohortId: string) {
       .from(cohortMembers)
       .where(and(eq(cohortMembers.cohortId, cohortId), eq(cohortMembers.status, "active"))),
     db.select().from(labAssignments)
-      .where(and(eq(labAssignments.cohortId, cohortId), eq(labAssignments.status, "active"))),
+      .where(eq(labAssignments.cohortId, cohortId)),
     db.select({ learnerId: labComponentResponses.learnerId, assignmentId: labComponentResponses.assignmentId, isComplete: labComponentResponses.isComplete })
       .from(labComponentResponses)
       .where(eq(labComponentResponses.cohortId, cohortId)),
@@ -57,6 +64,8 @@ export async function buildCohortOutcome(cohortId: string) {
     }).from(beiEvidence).where(eq(beiEvidence.cohortId, cohortId)),
   ]);
 
+  const now = Date.now();
+  const assignments = assignmentRows.filter((assignment) => assignmentIsLive(assignment, now));
   const activeLearners = members.length;
   const activeLearnerIds = new Set(members.map((member) => member.learnerId));
   const activeEvidenceRows = evidenceRows.filter((row) => activeLearnerIds.has(row.learnerId));
@@ -105,6 +114,8 @@ export async function buildCohortOutcome(cohortId: string) {
       completionRate: expectedInteractions ? Math.round((completedInteractions / expectedInteractions) * 100) : 0,
       engagementRate: activeLearners ? Math.round((participatingLearners / activeLearners) * 100) : 0,
       published: Boolean(lab),
+      startsAt: assignment.startsAt,
+      dueAt: assignment.dueAt,
       outcomes,
     };
   });
@@ -135,6 +146,7 @@ export async function buildCohortOutcome(cohortId: string) {
     safeguards: [
       "No private learner reflection payloads are selected by this service.",
       "Institutional completion is derived from the actual assigned cartridge component count; no hard-coded Lab denominator is used.",
+      "Only currently live Lab assignments contribute to institutional completion and outcome summaries.",
       "Only responses and evidence linked to active members of this cohort contribute to institutional reporting.",
       "BEI-05 is aggregated as source risk categories, never as an invented severity score.",
       "BEI-06 is aggregated as source-defined completed days out of seven.",

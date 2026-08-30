@@ -41,16 +41,17 @@ export async function POST(request: Request) {
 
   const now = Date.now();
   const membershipId = crypto.randomUUID();
+  // Break-glass/control-plane enrolment can stage a membership, but cannot activate institutional evidence without learner consent.
   await db.insert(cohortMembers).values({
     id: membershipId,
     cohortId,
     learnerId: learner.id,
-    status: "active",
+    status: "pending_consent",
     joinedAt: now,
     updatedAt: now,
   }).onConflictDoUpdate({
     target: [cohortMembers.cohortId, cohortMembers.learnerId],
-    set: { status: "active", updatedAt: now },
+    set: { status: "pending_consent", updatedAt: now },
   });
 
   const [membership] = await db
@@ -62,21 +63,22 @@ export async function POST(request: Request) {
   await db.insert(auditEvents).values({
     id: crypto.randomUUID(),
     organisationId: cohort.organisationId,
-    actorType: "institutional_admin",
+    actorType: "control_plane",
     actorRef: institutionalActor(request),
-    action: "cohort.enrol",
+    action: "cohort.enrol.pending_consent",
     entityType: "cohort_member",
     entityId: membership?.id ?? membershipId,
-    metadata: JSON.stringify({ cohortId, learnerId: learner.id }),
+    metadata: JSON.stringify({ cohortId, learnerId: learner.id, evidenceEligible: false }),
     createdAt: now,
   });
 
   return Response.json({
-    enrolled: true,
+    enrolled: false,
+    pendingConsent: true,
     cohortId,
     learnerId: learner.id,
     learnerEmail: learner.email,
     membershipId: membership?.id ?? membershipId,
-    note: "Institutional evidence is linked from interactions saved after cohort enrolment.",
-  }, { status: 201, headers: { "Cache-Control": "no-store" } });
+    note: "The learner must claim an authorised enrolment link and grant participation consent before this membership becomes active or contributes institutional evidence.",
+  }, { status: 202, headers: { "Cache-Control": "no-store" } });
 }

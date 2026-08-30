@@ -8,6 +8,7 @@ const migrations = [
   "0001_bright_black_tarantula.sql",
   "0002_aberrant_nemesis.sql",
   "0003_institutional_spine.sql",
+  "0004_self_service_deployment.sql",
 ];
 
 function migration(name) {
@@ -33,9 +34,14 @@ test("applies the complete BIS D1 migration chain to an empty SQLite database", 
       "learner_profiles",
       "lab_component_responses",
       "organisations",
+      "organisation_users",
+      "institutional_sessions",
+      "organisation_user_invites",
       "deployments",
       "cohorts",
+      "facilitator_cohorts",
       "cohort_members",
+      "learner_enrolment_links",
       "lab_assignments",
       "facilitator_observations",
       "bei_evidence",
@@ -47,11 +53,15 @@ test("applies the complete BIS D1 migration chain to an empty SQLite database", 
       assert.ok(tables.has(table), `migration chain must create ${table}`);
     }
 
-    const responseColumns = new Set(
-      db.prepare("pragma table_info('lab_component_responses')").all().map((row) => row.name),
-    );
+    const responseColumns = new Set(db.prepare("pragma table_info('lab_component_responses')").all().map((row) => row.name));
     assert.ok(responseColumns.has("cohort_id"));
     assert.ok(responseColumns.has("assignment_id"));
+
+    const organisationUserColumns = new Set(db.prepare("pragma table_info('organisation_users')").all().map((row) => row.name));
+    for (const column of ["first_name", "surname", "passcode_hash", "passcode_salt", "last_login_at"]) assert.ok(organisationUserColumns.has(column));
+
+    const assignmentColumns = new Set(db.prepare("pragma table_info('lab_assignments')").all().map((row) => row.name));
+    assert.ok(assignmentColumns.has("starts_at"));
   } finally {
     db.close();
   }

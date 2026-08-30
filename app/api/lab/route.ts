@@ -28,20 +28,32 @@ async function learnerForRequest(request: Request) {
 async function institutionalContextForLearner(learnerId: string, cartridgeId: string) {
   const db = getDb();
   const matches = await db
-    .select({ cohortId: cohortMembers.cohortId, assignmentId: labAssignments.id })
+    .select({
+      cohortId: cohortMembers.cohortId,
+      assignmentId: labAssignments.id,
+      status: labAssignments.status,
+      startsAt: labAssignments.startsAt,
+      dueAt: labAssignments.dueAt,
+    })
     .from(cohortMembers)
     .innerJoin(
       labAssignments,
       and(
         eq(labAssignments.cohortId, cohortMembers.cohortId),
         eq(labAssignments.cartridgeId, cartridgeId),
-        eq(labAssignments.status, "active"),
       ),
     )
     .where(and(eq(cohortMembers.learnerId, learnerId), eq(cohortMembers.status, "active")));
 
-  if (matches.length !== 1) return { cohortId: null, assignmentId: null };
-  return matches[0];
+  const now = Date.now();
+  const live = matches.filter((match) => {
+    if (match.status !== "active" && match.status !== "scheduled") return false;
+    if (match.startsAt && match.startsAt > now) return false;
+    if (match.dueAt && match.dueAt < now) return false;
+    return true;
+  });
+  if (live.length !== 1) return { cohortId: null, assignmentId: null };
+  return { cohortId: live[0].cohortId, assignmentId: live[0].assignmentId };
 }
 
 function safeParse(payload: string) {

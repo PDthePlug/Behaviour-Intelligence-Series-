@@ -36,14 +36,18 @@ test("institutional console never requests or renders private reflection payload
   const consoleSource = source("components/bis/InstitutionalConsole.tsx");
   assert.match(consoleSource, /\/api\/institutional\/dashboard/);
   assert.match(consoleSource, /\/api\/institutional\/reports/);
-  assert.match(consoleSource, /Private learner reflection words are excluded/);
+  assert.match(consoleSource, /Private reflections excluded/);
   assert.doesNotMatch(consoleSource, /learnerReflections/);
   assert.doesNotMatch(consoleSource, /payload\.answers/);
 });
 
-test("institutional console keeps the admin key session scoped", () => {
+test("institutional console uses staff sessions instead of exposing the control-plane key", () => {
   const consoleSource = source("components/bis/InstitutionalConsole.tsx");
-  assert.match(consoleSource, /sessionStorage\.getItem\("bis-institutional-admin-key"\)/);
-  assert.match(consoleSource, /sessionStorage\.setItem\("bis-institutional-admin-key"/);
+  const access = source("lib/institutional-access.ts");
+  assert.match(consoleSource, /\/api\/institutional\/auth/);
+  assert.match(consoleSource, /credentials: "include"/);
+  assert.doesNotMatch(consoleSource, /bis-institutional-admin-key/);
+  assert.doesNotMatch(consoleSource, /sessionStorage/);
   assert.doesNotMatch(consoleSource, /localStorage/);
+  assert.match(access, /HttpOnly; Secure; SameSite=Lax/);
 });
