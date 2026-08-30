@@ -14,6 +14,7 @@ test("institutional staff authentication uses hashed opaque sessions and one-tim
   assert.match(auth, /passcode\.length < 8/);
   assert.match(auth, /institutionalSessionCookie\(token\)/);
   assert.match(auth, /acceptedAt: now/);
+  assert.match(auth, /user\.status !== "invited"/);
   assert.match(tokens, /crypto\.subtle\.digest\("SHA-256"/);
   assert.match(access, /bis_institutional_session/);
   assert.doesNotMatch(auth, /tokenHash:\s*token\b/);
@@ -36,6 +37,8 @@ test("staff invitations carry role and facilitator cohort scope without storing 
   assert.match(users, /hashOpaqueToken\(token\)/);
   assert.match(users, /facilitatorCohorts/);
   assert.match(users, /Only an organisation owner can invite another owner/);
+  assert.match(users, /organisationUserInvites\.acceptedAt/);
+  assert.match(users, /isNull\(organisationUserInvites\.acceptedAt\)/);
   assert.match(users, /acceptPath/);
   assert.doesNotMatch(users, /tokenHash,\s*token,/);
 });
