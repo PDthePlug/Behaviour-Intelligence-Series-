@@ -1,14 +1,13 @@
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db";
-import { auditEvents, cohortMembers, cohorts, facilitatorObservations, learnerProfiles } from "@/db/schema";
-import { institutionalAdminFailure } from "@/lib/institutional-auth";
+import { auditEvents, cohortMembers, cohorts, facilitatorObservations, labAssignments, learnerProfiles } from "@/db/schema";
+import { requireInstitutionalAccess } from "@/lib/institutional-access";
 import { labById } from "@/lib/lab-catalog";
 
 type ObservationPayload = {
   cohortId?: string;
   learnerEmail?: string;
   cartridgeId?: string;
-  facilitatorEmail?: string;
   participation?: number;
   attention?: number;
   taskCompletion?: number;
@@ -36,9 +35,6 @@ function observationTime(value: unknown, fallback: number) {
 }
 
 export async function POST(request: Request) {
-  const denied = await institutionalAdminFailure(request);
-  if (denied) return denied;
-
   let body: ObservationPayload;
   try {
     body = await request.json() as ObservationPayload;
@@ -49,10 +45,13 @@ export async function POST(request: Request) {
   const cohortId = body.cohortId?.trim() ?? "";
   const learnerEmail = body.learnerEmail?.trim().toLowerCase() ?? "";
   const cartridgeId = body.cartridgeId?.trim() ?? "";
-  const facilitatorEmail = body.facilitatorEmail?.trim().toLowerCase() ?? "";
   if (!cohortId) return fail("Select a cohort.");
+  const access = await requireInstitutionalAccess(request, "observations:write", cohortId);
+  if (access.response) return access.response;
+  const context = access.context!;
+  const facilitatorEmail = context.email;
+
   if (!/^\S+@\S+\.\S+$/.test(learnerEmail)) return fail("Enter a valid learner email.");
-  if (!/^\S+@\S+\.\S+$/.test(facilitatorEmail)) return fail("Enter a valid facilitator email.");
   if (!labById(cartridgeId)) return fail("Select a published Lab cartridge.");
 
   const ratings = {
@@ -74,6 +73,10 @@ export async function POST(request: Request) {
   const db = getDb();
   const [cohort] = await db.select().from(cohorts).where(eq(cohorts.id, cohortId)).limit(1);
   if (!cohort || cohort.status !== "active") return fail("That cohort is not active.", 404);
+  const [assignment] = await db.select({ id: labAssignments.id }).from(labAssignments)
+    .where(and(eq(labAssignments.cohortId, cohortId), eq(labAssignments.cartridgeId, cartridgeId)))
+    .limit(1);
+  if (!assignment) return fail("That Lab is not assigned to this cohort.", 409);
   const [learner] = await db.select({ id: learnerProfiles.id }).from(learnerProfiles).where(eq(learnerProfiles.email, learnerEmail)).limit(1);
   if (!learner) return fail("That learner profile does not exist.", 404);
   const [membership] = await db
@@ -102,12 +105,12 @@ export async function POST(request: Request) {
     db.insert(auditEvents).values({
       id: crypto.randomUUID(),
       organisationId: cohort.organisationId,
-      actorType: "facilitator",
+      actorType: context.controlPlane ? "control_plane" : "institutional_user",
       actorRef: facilitatorEmail,
       action: "facilitator.observation.create",
       entityType: "facilitator_observation",
       entityId: observationId,
-      metadata: JSON.stringify({ cohortId, learnerId: learner.id, cartridgeId }),
+      metadata: JSON.stringify({ cohortId, learnerId: learner.id, cartridgeId, role: context.role }),
       createdAt: now,
     }),
   ]);
