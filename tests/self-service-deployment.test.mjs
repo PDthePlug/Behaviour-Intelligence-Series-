@@ -56,6 +56,16 @@ test("learner invitation claims require learner identity and capture learner par
   assert.match(join, /My private reflection words remain private/);
 });
 
+test("break-glass enrolment cannot activate institutional evidence without learner consent", () => {
+  const legacyEnrol = source("app/api/institutional/enrol/route.ts");
+  const lab = source("app/api/lab/route.ts");
+  assert.match(legacyEnrol, /status: "pending_consent"/);
+  assert.match(legacyEnrol, /pendingConsent: true/);
+  assert.match(legacyEnrol, /evidenceEligible: false/);
+  assert.match(legacyEnrol, /learner must claim an authorised enrolment link/i);
+  assert.match(lab, /eq\(cohortMembers\.status, "active"\)/);
+});
+
 test("Lab scheduling is represented in assignment administration and enforced when learner evidence is linked", () => {
   const assignments = source("app/api/institutional/assignments/route.ts");
   const lab = source("app/api/lab/route.ts");
