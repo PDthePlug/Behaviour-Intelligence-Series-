@@ -36,7 +36,7 @@ function observationTime(value: unknown, fallback: number) {
 }
 
 export async function POST(request: Request) {
-  const denied = institutionalAdminFailure(request);
+  const denied = await institutionalAdminFailure(request);
   if (denied) return denied;
 
   let body: ObservationPayload;
