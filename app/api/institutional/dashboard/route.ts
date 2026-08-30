@@ -1,4 +1,4 @@
-import { institutionalAdminFailure } from "@/lib/institutional-auth";
+import { requireInstitutionalAccess } from "@/lib/institutional-access";
 import { buildCohortOutcome } from "@/lib/institutional-outcomes";
 
 function fail(message: string, status = 400) {
@@ -6,11 +6,10 @@ function fail(message: string, status = 400) {
 }
 
 export async function GET(request: Request) {
-  const denied = await institutionalAdminFailure(request);
-  if (denied) return denied;
-
   const cohortId = new URL(request.url).searchParams.get("cohortId")?.trim() ?? "";
   if (!cohortId) return fail("Select a cohort.");
+  const access = await requireInstitutionalAccess(request, "outcomes:read", cohortId);
+  if (access.response) return access.response;
 
   const outcome = await buildCohortOutcome(cohortId);
   if (!outcome) return fail("That cohort does not exist.", 404);
