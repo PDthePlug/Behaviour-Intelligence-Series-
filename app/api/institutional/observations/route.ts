@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { auditEvents, cohortMembers, cohorts, facilitatorObservations, learnerProfiles } from "@/db/schema";
-import { institutionalActor, institutionalAdminFailure } from "@/lib/institutional-auth";
+import { institutionalAdminFailure } from "@/lib/institutional-auth";
 import { labById } from "@/lib/lab-catalog";
 
 type ObservationPayload = {
@@ -29,6 +29,10 @@ function rating(value: unknown) {
   const numeric = Number(value);
   if (!Number.isInteger(numeric) || numeric < 1 || numeric > 5) return null;
   return numeric;
+}
+
+function observationTime(value: unknown, fallback: number) {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
 }
 
 export async function POST(request: Request) {
@@ -92,14 +96,14 @@ export async function POST(request: Request) {
       confidence,
       indicators: JSON.stringify(indicators),
       notes,
-      observedAt: Number.isFinite(body.observedAt) ? Number(body.observedAt) : now,
+      observedAt: observationTime(body.observedAt, now),
       createdAt: now,
     }),
     db.insert(auditEvents).values({
       id: crypto.randomUUID(),
       organisationId: cohort.organisationId,
       actorType: "facilitator",
-      actorRef: institutionalActor(request) || facilitatorEmail,
+      actorRef: facilitatorEmail,
       action: "facilitator.observation.create",
       entityType: "facilitator_observation",
       entityId: observationId,
