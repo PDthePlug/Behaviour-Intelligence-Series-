@@ -48,14 +48,14 @@ test("synchronizes evidence on learner saves and can rebuild existing cohort evi
 });
 
 test("reports descriptive paired shifts, source adherence and risk categories", () => {
-  const dashboard = source("app/api/institutional/dashboard/route.ts");
+  const service = source("lib/institutional-outcomes.ts");
   const aggregation = source("lib/outcome-aggregation.ts");
-  assert.match(dashboard, /pairedShift\(labEvidence, "BEI-01", "BEI-07"\)/);
-  assert.match(dashboard, /pairedShift\(labEvidence, "BEI-04", "BEI-08"\)/);
-  assert.match(dashboard, /adherenceSummary\(labEvidence, 7\)/);
-  assert.match(dashboard, /riskDistribution\(labEvidence\)/);
-  assert.match(dashboard, /measurementStatus: "descriptive"/);
-  assert.match(dashboard, /MIN_OUTCOME_AGGREGATE_SIZE = 5/);
+  assert.match(service, /pairedShift\(labEvidence, "BEI-01", "BEI-07"\)/);
+  assert.match(service, /pairedShift\(labEvidence, "BEI-04", "BEI-08"\)/);
+  assert.match(service, /adherenceSummary\(labEvidence, 7\)/);
+  assert.match(service, /riskDistribution\(labEvidence\)/);
+  assert.match(service, /measurementStatus: "descriptive"/);
+  assert.match(service, /MIN_OUTCOME_AGGREGATE_SIZE = 5/);
   assert.match(aggregation, /fullAdherenceLearners/);
-  assert.doesNotMatch(dashboard, /psychometric validation[^\n]*true/i);
+  assert.doesNotMatch(service, /psychometric validation[^\n]*true/i);
 });
