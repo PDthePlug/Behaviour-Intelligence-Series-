@@ -1,6 +1,5 @@
-import { env } from "cloudflare:workers";
-
-function configuredAdminKey() {
+async function configuredAdminKey() {
+  const { env } = await import("cloudflare:workers");
   return (env as unknown as { BIS_INSTITUTIONAL_ADMIN_KEY?: string }).BIS_INSTITUTIONAL_ADMIN_KEY?.trim() ?? "";
 }
 
@@ -13,8 +12,8 @@ function constantTimeEqual(left: string, right: string) {
   return mismatch === 0;
 }
 
-export function institutionalAdminFailure(request: Request): Response | null {
-  const configured = configuredAdminKey();
+export async function institutionalAdminFailure(request: Request): Promise<Response | null> {
+  const configured = await configuredAdminKey();
   if (!configured) {
     return Response.json(
       { error: "Institutional administration is not configured." },
