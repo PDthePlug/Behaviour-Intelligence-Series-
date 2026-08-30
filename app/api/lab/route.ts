@@ -1,6 +1,7 @@
 import { and, desc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { cohortMembers, labAssignments, labComponentResponses, learnerProfiles } from "@/db/schema";
+import { synchronizeComponentEvidence } from "@/lib/evidence-engine";
 import { componentForLab, defaultLab, labById, labComponentIds, labComponents, labStepIds } from "@/lib/lab-catalog";
 import { sessionFromRequest } from "@/lib/session";
 
@@ -114,6 +115,7 @@ export async function POST(request: Request) {
   const serialized = JSON.stringify(body.payload ?? null);
   if (serialized.length > 16_000) return failure("This reflection is too long to save in one interaction.");
   const component = componentForLab(lab, componentId);
+  if (!component) return failure("That interaction is not published in this learner cartridge.");
   const institutionalContext = await institutionalContextForLearner(learnerId, lab.cartridgeId);
   const now = Date.now();
   const db = getDb();
@@ -126,7 +128,7 @@ export async function POST(request: Request) {
     componentId,
     payload: serialized,
     isComplete: body.isComplete === true,
-    beiTarget: component?.beiTarget,
+    beiTarget: component.beiTarget,
     cohortId: institutionalContext.cohortId,
     assignmentId: institutionalContext.assignmentId,
     updatedAt: now,
@@ -136,18 +138,28 @@ export async function POST(request: Request) {
       stepId,
       payload: serialized,
       isComplete: body.isComplete === true,
-      beiTarget: component?.beiTarget,
+      beiTarget: component.beiTarget,
       cohortId: institutionalContext.cohortId,
       assignmentId: institutionalContext.assignmentId,
       updatedAt: now,
     },
   });
 
+  const evidence = await synchronizeComponentEvidence({
+    learnerId,
+    cohortId: institutionalContext.cohortId,
+    lab,
+    component,
+    payload: body.payload ?? null,
+    isComplete: body.isComplete === true,
+    observedAt: now,
+  });
+
   return Response.json({
     saved: true,
     componentId,
     isComplete: body.isComplete === true,
-    institutional: institutionalContext.assignmentId ? { linked: true } : { linked: false },
+    institutional: institutionalContext.assignmentId ? { linked: true, evidenceProjected: Boolean(evidence) } : { linked: false, evidenceProjected: false },
     updatedAt: now,
   }, { status: 201, headers: { "Cache-Control": "no-store" } });
 }
