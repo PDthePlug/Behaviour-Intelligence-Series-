@@ -1,7 +1,7 @@
 import { count, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { labComponentResponses, learnerProfiles, partnershipInquiries } from "@/db/schema";
-import { habitLab } from "@/lib/habit-lab";
+import { publishedLabs } from "@/lib/lab-catalog";
 
 export async function GET() {
   const db = getDb();
@@ -12,18 +12,27 @@ export async function GET() {
     db.select({ count: count() }).from(partnershipInquiries),
   ]);
 
-  const liveResponses = Number(responseCount[0]?.count ?? 0);
-  const completed = Number(completeCount[0]?.count ?? 0);
+  const interactionsCaptured = Number(responseCount[0]?.count ?? 0);
+  const completedInteractions = Number(completeCount[0]?.count ?? 0);
   const learners = Number(learnerCount[0]?.count ?? 0);
-  const totalPossible = Math.max(learners, 1) * 55;
+  const completionSignalRate = interactionsCaptured
+    ? Math.round((completedInteractions / interactionsCaptured) * 100)
+    : 0;
+
   return Response.json({
-    cohort: {
-      activeLearners: learners,
-      reflectionsCaptured: liveResponses,
-      completedLabSteps: Math.round((completed / totalPossible) * 100),
+    platform: {
+      learnerProfiles: learners,
+      interactionsCaptured,
+      completedInteractions,
+      completionSignalRate,
+      publishedCartridges: publishedLabs.length,
       partnershipInterest: Number(enquiryCount[0]?.count ?? 0),
-      status: liveResponses > 0 ? `${habitLab.title} activity` : "Awaiting learner activity",
+      status: interactionsCaptured > 0 ? "Learner activity present" : "Awaiting learner activity",
     },
-    safeguards: ["Private learner writing is never included in this view.", "Only cohort-level participation signals are shown.", "No labels, diagnoses or automated learner profiles."],
+    safeguards: [
+      "This endpoint is platform telemetry, not an institutional cohort report.",
+      "Private learner writing is never included in this view.",
+      "No hard-coded Lab denominator is used; cohort completion is calculated only by the institutional dashboard endpoint.",
+    ],
   }, { headers: { "Cache-Control": "no-store" } });
 }
