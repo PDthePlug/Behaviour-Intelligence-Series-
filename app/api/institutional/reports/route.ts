@@ -2,7 +2,7 @@ import { and, desc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { auditEvents, generatedReports, outcomeSnapshots } from "@/db/schema";
 import { buildExecutiveReport } from "@/lib/executive-report";
-import { institutionalActor, institutionalAdminFailure } from "@/lib/institutional-auth";
+import { requireInstitutionalAccess } from "@/lib/institutional-access";
 import { buildCohortOutcome } from "@/lib/institutional-outcomes";
 
 type ReportRequest = { cohortId?: string };
@@ -20,11 +20,10 @@ function parsePayload(payload: string) {
 }
 
 export async function GET(request: Request) {
-  const denied = await institutionalAdminFailure(request);
-  if (denied) return denied;
-
   const cohortId = new URL(request.url).searchParams.get("cohortId")?.trim() ?? "";
   if (!cohortId) return fail("Select a cohort.");
+  const access = await requireInstitutionalAccess(request, "outcomes:read", cohortId);
+  if (access.response) return access.response;
 
   const db = getDb();
   const rows = await db.select()
@@ -46,9 +45,6 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const denied = await institutionalAdminFailure(request);
-  if (denied) return denied;
-
   let body: ReportRequest;
   try {
     body = await request.json() as ReportRequest;
@@ -58,6 +54,9 @@ export async function POST(request: Request) {
 
   const cohortId = body.cohortId?.trim() ?? "";
   if (!cohortId) return fail("Select a cohort.");
+  const access = await requireInstitutionalAccess(request, "reports:write", cohortId);
+  if (access.response) return access.response;
+  const context = access.context!;
 
   const outcome = await buildCohortOutcome(cohortId);
   if (!outcome) return fail("That cohort does not exist.", 404);
@@ -67,7 +66,6 @@ export async function POST(request: Request) {
   const reportId = crypto.randomUUID();
   const snapshotId = crypto.randomUUID();
   const payload = JSON.stringify(report);
-  const actor = institutionalActor(request);
   const db = getDb();
 
   await db.batch([
@@ -91,12 +89,12 @@ export async function POST(request: Request) {
     db.insert(auditEvents).values({
       id: crypto.randomUUID(),
       organisationId: outcome.organisation.id,
-      actorType: "institutional_admin",
-      actorRef: actor,
+      actorType: context.controlPlane ? "control_plane" : "institutional_user",
+      actorRef: context.email,
       action: "report.generate",
       entityType: "generated_report",
       entityId: reportId,
-      metadata: JSON.stringify({ cohortId, snapshotId, reportType: "executive_outcome" }),
+      metadata: JSON.stringify({ cohortId, snapshotId, reportType: "executive_outcome", role: context.role }),
       createdAt: generatedAt,
     }),
   ]);
