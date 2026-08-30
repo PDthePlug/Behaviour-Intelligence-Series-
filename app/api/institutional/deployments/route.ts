@@ -14,7 +14,7 @@ function optionalTime(value: unknown) {
 }
 
 export async function GET(request: Request) {
-  const access = await requireInstitutionalAccess(request, "cohorts:read");
+  const access = await requireInstitutionalAccess(request, "cohorts:write");
   if (access.response) return access.response;
   const context = access.context!;
   if (!context.organisationId) return Response.json({ deployments: [] }, { headers: { "Cache-Control": "no-store" } });
