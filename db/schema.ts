@@ -61,6 +61,111 @@ export const learnerProfiles = sqliteTable(
   ],
 );
 
+export const organisations = sqliteTable(
+  "organisations",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
+    status: text("status").notNull().default("active"),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("organisations_slug_unique").on(table.slug),
+    index("organisations_status_idx").on(table.status),
+  ],
+);
+
+export const organisationUsers = sqliteTable(
+  "organisation_users",
+  {
+    id: text("id").primaryKey(),
+    organisationId: text("organisation_id").notNull(),
+    email: text("email").notNull(),
+    role: text("role").notNull().default("viewer"),
+    status: text("status").notNull().default("invited"),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("organisation_users_org_email_unique").on(table.organisationId, table.email),
+    index("organisation_users_email_idx").on(table.email),
+  ],
+);
+
+export const deployments = sqliteTable(
+  "deployments",
+  {
+    id: text("id").primaryKey(),
+    organisationId: text("organisation_id").notNull(),
+    name: text("name").notNull(),
+    status: text("status").notNull().default("active"),
+    startsAt: integer("starts_at"),
+    endsAt: integer("ends_at"),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [
+    index("deployments_organisation_idx").on(table.organisationId),
+    index("deployments_status_idx").on(table.status),
+  ],
+);
+
+export const cohorts = sqliteTable(
+  "cohorts",
+  {
+    id: text("id").primaryKey(),
+    organisationId: text("organisation_id").notNull(),
+    deploymentId: text("deployment_id").notNull(),
+    name: text("name").notNull(),
+    externalRef: text("external_ref"),
+    status: text("status").notNull().default("active"),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [
+    index("cohorts_organisation_idx").on(table.organisationId),
+    index("cohorts_deployment_idx").on(table.deploymentId),
+    uniqueIndex("cohorts_deployment_name_unique").on(table.deploymentId, table.name),
+  ],
+);
+
+export const cohortMembers = sqliteTable(
+  "cohort_members",
+  {
+    id: text("id").primaryKey(),
+    cohortId: text("cohort_id").notNull(),
+    learnerId: text("learner_id").notNull(),
+    status: text("status").notNull().default("active"),
+    joinedAt: integer("joined_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("cohort_members_cohort_learner_unique").on(table.cohortId, table.learnerId),
+    index("cohort_members_learner_idx").on(table.learnerId),
+    index("cohort_members_status_idx").on(table.cohortId, table.status),
+  ],
+);
+
+export const labAssignments = sqliteTable(
+  "lab_assignments",
+  {
+    id: text("id").primaryKey(),
+    cohortId: text("cohort_id").notNull(),
+    cartridgeId: text("cartridge_id").notNull(),
+    status: text("status").notNull().default("active"),
+    assignedAt: integer("assigned_at").notNull(),
+    dueAt: integer("due_at"),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("lab_assignments_cohort_cartridge_unique").on(table.cohortId, table.cartridgeId),
+    index("lab_assignments_status_idx").on(table.cohortId, table.status),
+  ],
+);
+
 export const labComponentResponses = sqliteTable(
   "lab_component_responses",
   {
@@ -72,13 +177,129 @@ export const labComponentResponses = sqliteTable(
     payload: text("payload").notNull(),
     isComplete: integer("is_complete", { mode: "boolean" }).notNull().default(false),
     beiTarget: text("bei_target"),
+    cohortId: text("cohort_id"),
+    assignmentId: text("assignment_id"),
     updatedAt: integer("updated_at").notNull(),
   },
   (table) => [
     uniqueIndex("lab_component_responses_unique").on(table.learnerId, table.cartridgeId, table.componentId),
     index("lab_component_responses_learner_idx").on(table.learnerId, table.cartridgeId),
     index("lab_component_responses_step_idx").on(table.stepId),
+    index("lab_component_responses_cohort_idx").on(table.cohortId, table.assignmentId),
     index("lab_component_responses_updated_idx").on(table.updatedAt),
+  ],
+);
+
+export const facilitatorObservations = sqliteTable(
+  "facilitator_observations",
+  {
+    id: text("id").primaryKey(),
+    cohortId: text("cohort_id").notNull(),
+    learnerId: text("learner_id").notNull(),
+    cartridgeId: text("cartridge_id").notNull(),
+    facilitatorEmail: text("facilitator_email").notNull(),
+    participation: integer("participation"),
+    attention: integer("attention"),
+    taskCompletion: integer("task_completion"),
+    willingnessToContribute: integer("willingness_to_contribute"),
+    reflectionDepth: integer("reflection_depth"),
+    evidenceQuality: integer("evidence_quality"),
+    confidence: text("confidence"),
+    indicators: text("indicators").notNull().default("[]"),
+    notes: text("notes"),
+    observedAt: integer("observed_at").notNull(),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => [
+    index("facilitator_observations_cohort_idx").on(table.cohortId, table.cartridgeId),
+    index("facilitator_observations_learner_idx").on(table.learnerId, table.cartridgeId),
+  ],
+);
+
+export const beiEvidence = sqliteTable(
+  "bei_evidence",
+  {
+    id: text("id").primaryKey(),
+    cohortId: text("cohort_id").notNull(),
+    learnerId: text("learner_id").notNull(),
+    cartridgeId: text("cartridge_id").notNull(),
+    beiCode: text("bei_code").notNull(),
+    phase: text("phase").notNull().default("observed"),
+    sourceType: text("source_type").notNull(),
+    sourceId: text("source_id"),
+    numericValue: integer("numeric_value"),
+    textValue: text("text_value"),
+    evidenceQuality: integer("evidence_quality"),
+    observedAt: integer("observed_at").notNull(),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => [
+    index("bei_evidence_cohort_idx").on(table.cohortId, table.cartridgeId, table.beiCode),
+    index("bei_evidence_learner_idx").on(table.learnerId, table.cartridgeId, table.beiCode),
+  ],
+);
+
+export const outcomeSnapshots = sqliteTable(
+  "outcome_snapshots",
+  {
+    id: text("id").primaryKey(),
+    cohortId: text("cohort_id").notNull(),
+    cartridgeId: text("cartridge_id"),
+    snapshotType: text("snapshot_type").notNull(),
+    payload: text("payload").notNull(),
+    generatedAt: integer("generated_at").notNull(),
+  },
+  (table) => [index("outcome_snapshots_cohort_idx").on(table.cohortId, table.generatedAt)],
+);
+
+export const generatedReports = sqliteTable(
+  "generated_reports",
+  {
+    id: text("id").primaryKey(),
+    cohortId: text("cohort_id").notNull(),
+    reportType: text("report_type").notNull(),
+    status: text("status").notNull().default("draft"),
+    payload: text("payload").notNull().default("{}"),
+    generatedAt: integer("generated_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [index("generated_reports_cohort_idx").on(table.cohortId, table.reportType)],
+);
+
+export const learnerConsents = sqliteTable(
+  "learner_consents",
+  {
+    id: text("id").primaryKey(),
+    learnerId: text("learner_id").notNull(),
+    cohortId: text("cohort_id"),
+    consentType: text("consent_type").notNull(),
+    granted: integer("granted", { mode: "boolean" }).notNull().default(false),
+    capturedAt: integer("captured_at").notNull(),
+    revokedAt: integer("revoked_at"),
+    source: text("source").notNull().default("digital"),
+  },
+  (table) => [
+    uniqueIndex("learner_consents_scope_unique").on(table.learnerId, table.cohortId, table.consentType),
+    index("learner_consents_cohort_idx").on(table.cohortId),
+  ],
+);
+
+export const auditEvents = sqliteTable(
+  "audit_events",
+  {
+    id: text("id").primaryKey(),
+    organisationId: text("organisation_id"),
+    actorType: text("actor_type").notNull(),
+    actorRef: text("actor_ref"),
+    action: text("action").notNull(),
+    entityType: text("entity_type").notNull(),
+    entityId: text("entity_id"),
+    metadata: text("metadata").notNull().default("{}"),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => [
+    index("audit_events_organisation_idx").on(table.organisationId, table.createdAt),
+    index("audit_events_entity_idx").on(table.entityType, table.entityId),
   ],
 );
 
